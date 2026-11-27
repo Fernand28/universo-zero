@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Universo Zero // Fase 7 - Civilização, Bibliotecas & Consciência (12 Bits)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', monospace; }
+    body { background-color: #020307; color: #e0e6ed; overflow: hidden; display: flex; flex-direction: column; height: 100vh; }
+
+    #era-bar {
+      position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 20;
+      background: rgba(10, 14, 24, 0.92); border: 1px solid #1e293b;
+      padding: 5px 12px; border-radius: 20px; display: flex; gap: 6px; align-items: center;
+      backdrop-filter: blur(6px); font-size: 11px; flex-wrap: wrap; justify-content: center;
+    }
+    .era-label { color: #64748b; font-weight: bold; margin-right: 2px; }
+    .era-link {
+      text-decoration: none; color: #94a3b8; padding: 3px 8px; border-radius: 12px;
+      transition: 0.2s; border: 1px solid transparent;
+    }
+    .era-link:hover { color: #f8fafc; background: #1e293b; }
+    .era-link.active { color: #c084fc; background: rgba(192, 132, 252, 0.16); border-color: #9333ea; font-weight: bold; }
+
+    #hud-left {
+      position: absolute; top: 15px; left: 15px; z-index: 10;
+      background: rgba(10, 14, 24, 0.9); border: 1px solid #1e293b;
+      padding: 14px; border-radius: 8px; width: 325px; backdrop-filter: blur(6px);
+      max-height: calc(100vh - 175px); overflow-y: auto;
+    }
+    #hud-right {
+      position: absolute; top: 15px; right: 15px; z-index: 10;
+      background: rgba(10, 14, 24, 0.9); border: 1px solid #1e293b;
+      padding: 14px; border-radius: 8px; width: 355px; backdrop-filter: blur(6px);
+      max-height: calc(100vh - 30px); overflow-y: auto;
+    }
+
+    h1 { font-size: 15px; color: #c084fc; margin-bottom: 4px; letter-spacing: 1px; }
+    h2 { font-size: 13px; color: #38bdf8; margin-bottom: 6px; letter-spacing: 0.5px; text-transform: uppercase; }
+    p.sub { font-size: 11px; color: #94a3b8; margin-bottom: 10px; line-height: 1.4; }
+
+    .season-banner {
+      padding: 7px 10px; border-radius: 6px; margin-bottom: 10px; font-size: 12px;
+      font-weight: bold; display: flex; justify-content: space-between; align-items: center;
+      border: 1px solid #1e293b; transition: 0.5s;
+    }
+    .season-summer { background: rgba(16, 185, 129, 0.15); border-color: #059669; color: #34d399; }
+    .season-winter { background: rgba(56, 189, 248, 0.15); border-color: #0284c7; color: #7dd3fc; }
+
+    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; font-size: 11px; }
+    .stat-box { background: #0d121d; padding: 6px 8px; border-radius: 4px; border: 1px solid #1e293b; }
+    .stat-val { font-size: 14px; font-weight: bold; color: #f8fafc; }
+    .stat-val.purple { color: #c084fc; }
+    .stat-val.amber { color: #fbbf24; }
+    .stat-val.cyan { color: #22d3ee; }
+    .stat-val.emerald { color: #34d399; }
+
+    .controls { display: flex; flex-direction: column; gap: 7px; font-size: 11px; }
+    label { display: flex; justify-content: space-between; color: #cbd5e1; }
+    input[type=range] { width: 100%; accent-color: #c084fc; cursor: pointer; }
+
+    .ai-toggle {
+      margin-top: 8px; padding: 8px; background: rgba(124, 58, 237, 0.12);
+      border: 1px solid #6d28d9; border-radius: 6px; display: flex;
+      justify-content: space-between; align-items: center; font-size: 11px;
+    }
+
+    .api-box { margin-top: 10px; padding-top: 10px; border-top: 1px solid #1e293b; }
+    .api-row { display: flex; gap: 5px; margin-top: 5px; }
+    input[type=text] {
+      flex: 1; background: #090d16; border: 1px solid #334155; color: #c084fc;
+      padding: 5px 8px; border-radius: 4px; font-size: 11px; letter-spacing: 1.2px; font-weight: bold;
+    }
+
+    .btns { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+    button {
+      flex: 1; padding: 7px 6px; border: none; border-radius: 4px; cursor: pointer;
+      font-size: 11px; font-weight: bold; transition: 0.2s; min-width: 85px;
+    }
+    .btn-primary { background: #0284c7; color: white; }
+    .btn-primary:hover { background: #0369a1; }
+    .btn-pred { background: #dc2626; color: white; }
+    .btn-pred:hover { background: #b91c1c; }
+    .btn-purple { background: #7c3aed; color: white; }
+    .btn-purple:hover { background: #6d28d9; }
+    .btn-danger { background: #475569; color: white; }
+    .btn-danger:hover { background: #334155; }
+    .btn-export { background: #059669; color: white; width: 100%; margin-top: 6px; }
+    .btn-export:hover { background: #047857; }
+
+    #log {
+      position: absolute; bottom: 15px; left: 15px; z-index: 10;
+      background: rgba(10, 14, 24, 0.88); border: 1px solid #1e293b;
+      padding: 10px; border-radius: 6px; width: 325px; height: 135px;
+      overflow-y: auto; font-size: 11px; color: #94a3b8;
+    }
+    .log-entry { margin-bottom: 4px; border-bottom: 1px solid #161e2e; padding-bottom: 2px; }
+    .highlight { color: #34d399; }
+    .winter-log { color: #7dd3fc; }
+    .ai-log { color: #c084fc; }
+    .lib-log { color: #fbbf24; }
+
+    .genome-item {
+      background: #0d121d; border: 1px solid #1e293b; border-radius: 5px;
+      padding: 7px 9px; margin-bottom: 6px; font-size: 11px;
+    }
+    .genome-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
+    .genome-code { font-weight: bold; font-size: 11px; color: #f8fafc; letter-spacing: 0.8px; }
+    .genome-count { background: #1e293b; padding: 2px 6px; border-radius: 10px; font-weight: bold; color: #c084fc; }
+    .genome-traits { color: #94a3b8; font-size: 10px; margin-bottom: 4px; line-height: 1.3; }
+    .bar-bg { width: 100%; height: 4px; background: #1e293b; border-radius: 2px; overflow: hidden; }
+    .bar-fill { height: 100%; transition: width 0.3s; }
+
+    canvas { display: block; width: 100vw; height: 100vh; cursor: crosshair; }
+  </style>
+</head>
+<body>
+
+  <div id="era-bar">
+    <span class="era-label">ERAS:</span>
+    <a href="fase3.html" class="era-link">Era 3</a>
+    <a href="fase4.html" class="era-link">Era 4</a>
+    <a href="fase5.html" class="era-link">Era 5</a>
+    <a href="fase6.html" class="era-link">Era 6</a>
+    <a href="index.html" class="era-link active">Era 7: Civilização (12B)</a>
+    <a href="https://github.com" target="_blank" class="era-link" style="color:#fbbf24;">📊 Dados</a>
+    <a href="https://github.com" target="_blank" class="era-link" style="color:#34d399;">🤝 Colaborar</a>
+  </div>
+
+  <div id="hud-left">
+    <h1>UNIVERSO ZERO // FASE 7</h1>
+    <p class="sub">DNA de 12 Bits: Civilização (🏛️Bibliotecas Culturais + ✨Consciência Simbólica) & Co-Arquiteto IA.</p>
+
+    <div id="season-box" class="season-banner season-summer">
+      <span id="season-name">☀️ VERÃO CÓSMICO</span>
+      <span id="season-timer">0%</span>
+    </div>
+
+    <div class="stats">
+      <div class="stat-box">Tempo (Ciclos)<div class="stat-val" id="stat-time">0</div></div>
+      <div class="stat-box">Entidades<div class="stat-val" id="stat-pop">0</div></div>
+      <div class="stat-box">Bibliotecas 🏛️<div class="stat-val amber" id="stat-libs">0</div></div>
+      <div class="stat-box">Consciências ✨<div class="stat-val purple" id="stat-consc">0</div></div>
+      <div class="stat-box">Núcleos Colônia<div class="stat-val emerald" id="stat-core">0</div></div>
+      <div class="stat-box">Defensores 🛡️<div class="stat-val cyan" id="stat-shield">0</div></div>
+    </div>
+
+    <div class="controls">
+      <div>
+        <label>Taxa de Mutação: <span id="val-mut">15%</span></label>
+        <input type="range" id="ctrl-mut" min="0" max="50" value="15">
+      </div>
+      <div>
+        <label>Intensidade dos Oásis: <span id="val-eng">Alta</span></label>
+        <input type="range" id="ctrl-eng" min="1" max="10" value="8">
+      </div>
+    </div>
+
+    <div class="ai-toggle">
+      <span>🤖 Co-Arquiteto IA Observador</span>
+      <input type="checkbox" id="chk-ai-observer" checked style="accent-color:#c084fc; cursor:pointer;">
+    </div>
+
+    <div class="api-box">
+      <label>Injetar Genoma (12 bits):</label>
+      <div class="api-row">
+        <input type="text" id="input-dna" maxlength="12" value="000111110111" placeholder="Ex: 000111110111">
+        <button class="btn-purple" id="btn-inject-dna" style="flex:0;">Injetar</button>
+      </div>
+    </div>
+
+    <div class="btns">
+      <button class="btn-primary" id="btn-bigbang">Big Bang</button>
+      <button class="btn-pred" id="btn-spawn-pred">+ Predadores</button>
+      <button class="btn-danger" id="btn-reset">Zerar</button>
+      <button class="btn-export" id="btn-export">Exportar Civilização (JSON)</button>
+    </div>
+  </div>
+
+  <div id="hud-right">
+    <h2>Genomas da Civilização (12 Bits)</h2>
+    <p class="sub">[Bit 11: 🏛️Arquiteto] [Bit 12: ✨Consciência]</p>
+    <div id="genome-list">
+      <div style="font-size: 11px; color: #64748b;">Aguardando surgimento de entidades...</div>
+    </div>
+  </div>
+
+  <div id="log">
+    <div class="log-entry">Fase 7 iniciada. Cultura acumulativa e Bibliotecas de Dados ativas.</div>
+  </div>
+
+  <canvas id="universe"></canvas>
+
+<script>
+  const canvas = document.getElementById('universe');
+  const ctx = canvas.getContext('2d');
+  let width, height;
+
+  function resize() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  let entities = [];
+  let nutrients = [];
+  let signals = [];
+  let oases = [];
+  let libraries = []; // Artefatos Culturais / Bibliotecas de Dados construídas pelas colônias
+  let cycles = 0;
+  let maxGen = 0;
+  let totalMutations = 0;
+  let totalKnowledgeTransfers = 0;
+  let totalSignalsEmitted = 0;
+  let totalLibraryDownloads = 0;
+  let wintersSurvived = 0;
+  const MAX_POPULATION = 360;
+  const MAX_LIBRARIES = 12;
+  const YEAR_LENGTH = 1800;
+  const SUMMER_LENGTH = 1100;
+  let isWinter = false;
+
+  const ctrlMut = document.getElementById('ctrl-mut');
+  const ctrlEng = document.getElementById('ctrl-eng');
+  const chkAiObserver = document.getElementById('chk-ai-observer');
+
+  ctrlMut.oninput = () =>
+    document.getElementById('val-mut').innerText = ctrlMut.value + '%';
+
+  ctrlEng.oninput = () => {
+    const v = ctrlEng.value;
+    document.getElementById('val-eng').innerText =
+      v < 4 ? 'Baixa' : v < 8 ? 'Média' : 'Alta';
+  };
+
+  function generateOases() {
+    oases = [];
+    const margin = 170;
+    for (let i = 0; i < 3; i++) {
+      oases.push({
+        x: margin + Math.random() * (width - margin * 2),
+        y: margin + Math.random() * (height - margin * 2),
+        radius: 115
+      });
+    }
+  }
+  generateOases();
+
+  function addLog(msg, type = 'normal') {
+    const log = document.getElementById('log');
+    const div = document.createElement('div');
+    div.className = 'log-entry' + (
+      type === 'highlight' ? ' highlight' :
+      type === 'winter' ? ' winter-log' :
+      type === 'ai' ? ' ai-log' :
+      type === 'lib' ? ' lib-log' : ''
+    );
+    div.innerText = '[Ciclo ' + cycles + '] ' + msg;
+    log.prepend(div);
+    if (log.children.length > 28) log.lastChild.remove();
+  }
+
+  function describeDNA(dna) {
+    if (dna[8] === 1) {
+      const extras = ['⚔️PREDADOR'];
+      if (dna[4] === 1) extras.push('👁️Visão');
+      if (dna[9] === 1) extras.push('🛡️Blindado');
+      return `${dna[1] === 1 ? 'Veloz' : 'Econômico'} • ` +
+        `${dna[2] === 0 ? 'Bando' : 'Solitário'} | ${extras.join(' ')}`;
+    }
+
+    const t1 = dna[0] === 0 ? 'Coesão' : 'Simbionte';
+    const t2 = dna[1] === 0 ? 'Econômico' : 'Veloz';
+    const t3 = dna[2] === 0 ? 'Social' : 'Solitário';
+    const extras = [];
+
+    if (dna[4] === 1) extras.push('👁️Percepção');
+    if (dna[5] === 1) extras.push('🧠Memória');
+    if (dna[6] === 1) extras.push('📡Sinal');
+    if (dna[7] === 1) extras.push('🧬Colônia');
+    if (dna[9] === 1) extras.push('🛡️Escudo');
+    if (dna[10] === 1) extras.push('🏛️Arquiteto');
+    if (dna[11] === 1) extras.push('✨Consciência');
+
+    return `${t1} • ${t2} • ${t3}` +
+      (extras.length ? ` | ${extras.join(' ')}` : '');
+  }
+
+  function getColorFromDNA(dna) {
+    if (dna[8] === 1) return '#ef4444';
+    if (dna[11] === 1) return '#c084fc';
+    if (dna[0] === 0) {
+      return dna[3] === 0 ? '#38bdf8' : '#818cf8';
+    }
+    return dna[3] === 0 ? '#fbbf24' : '#f472b6';
+  }
+
+  class Entity {
+    constructor(x, y, dna = null, gen = 1) {
+      this.x = x;
+      this.y = y;
+      this.vx = (Math.random() - 0.5) * 2;
+      this.vy = (Math.random() - 0.5) * 2;
+      this.gen = gen;
+      if (gen > maxGen) maxGen = gen;
+
+      // DNA de 12 bits
+      this.dna = dna || [
+        Math.round(Math.random()),
+        Math.round(Math.random()),
+        Math.round(Math.random()),
+        Math.round(Math.random()),
+        Math.random() < 0.25 ? 1 : 0,
+        Math.random() < 0.20 ? 1 : 0,
+        Math.random() < 0.20 ? 1 : 0,
+        Math.random() < 0.20 ? 1 : 0,
+        Math.random() < 0.06 ? 1 : 0,
+        Math.random() < 0.15 ? 1 : 0,
+        Math.random() < 0.12 ? 1 : 0,
+        Math.random() < 0.10 ? 1 : 0
+      ];
+
+      this.energy = this.dna[8] === 1 ? 95 : 80;
+      this.memorySpot = null;
+      this.signalCooldown = 0;
+      this.attackCooldown = 0;
+      this.buildCooldown = 0;
+      this.bondCycles = 0;
+      this.isColonyCore = false;
+      this.updatePhenotype();
+    }
+
+    updatePhenotype() {
+      this.isPredator = this.dna[8] === 1;
+      this.hasShield = this.dna[9] === 1;
+      this.isArchitect = this.dna[10] === 1 && !this.isPredator;
+      this.hasConsciousness = this.dna[11] === 1 && !this.isPredator;
+      this.baseRadius = this.isPredator
+        ? 5.0
+        : (this.dna[0] === 0 ? 4.5 : 3.6);
+      this.radius = this.isColonyCore
+        ? this.baseRadius + 2.2
+        : this.baseRadius;
+      this.speed = this.isPredator
+        ? 2.45
+        : (this.dna[1] === 0 ? 1.25 : 2.3);
+      this.color = getColorFromDNA(this.dna);
+      this.visionRange = this.dna[4] === 1 ? 165 : 75;
+      this.hasMemory = this.dna[5] === 1;
+      this.canSignal = this.dna[6] === 1;
+      this.isMulticellular = this.dna[7] === 1 && !this.isPredator;
+    }
+
+    mutateDNA() {
+      const rate = parseInt(ctrlMut.value) / 100;
+      let mutated = false;
+      const newDna = this.dna.map((bit, idx) => {
+        const effectiveRate = idx === 8 ? rate * 0.3 : rate;
+        if (Math.random() < effectiveRate) {
+          mutated = true;
+          return bit === 0 ? 1 : 0;
+        }
+        return bit;
+      });
+      if (mutated) totalMutations++;
+      return newDna;
+    }
+
+    emitSignal(isDanger = false) {
+      if (!this.canSignal || this.signalCooldown > 0) return;
+      signals.push({
+        x: this.x,
+        y: this.y,
+        radius: 5,
+        maxRadius: 230,
+        alpha: 0.8,
+        danger: isDanger
+      });
+      this.signalCooldown = 120;
+      this.energy -= 2;
+      totalSignalsEmitted++;
+    }
+
+    buildCulturalLibrary() {
+      if (!this.isArchitect || this.buildCooldown > 0 || libraries.length >= MAX_LIBRARIES) return;
+
+      for (const lib of libraries) {
+        if (Math.hypot(lib.x - this.x, lib.y - this.y) < 160) return;
+      }
+
+      this.energy -= 65;
+      this.buildCooldown = 600;
+      libraries.push({
+        x: this.x,
+        y: this.y,
+        storedDna: [...this.dna],
+        charge: 100,
+        radius: 130,
+        creatorGen: this.gen
+      });
+      addLog(
+        `🏛️ Biblioteca Cultural erguida na Gen ${this.gen}! Acervo [${this.dna.join('')}] salvo.`,
+        'lib'
+      );
+    }
+
+    update() {
+      if (this.signalCooldown > 0) this.signalCooldown--;
+      if (this.attackCooldown > 0) this.attackCooldown--;
+      if (this.buildCooldown > 0) this.buildCooldown--;
+
+      let nearLibrary = null;
+      for (const lib of libraries) {
+        const distLib = Math.hypot(lib.x - this.x, lib.y - this.y);
+        if (distLib < lib.radius) {
+          nearLibrary = lib;
+          break;
+        }
+      }
+      const libDiscount =
+        nearLibrary && !this.isPredator ? 0.65 : 1.0;
+      const winterMultiplier =
+        isWinter ? (this.isColonyCore ? 1.1 : 1.38) : 1.0;
+      let cost =
+        (this.dna[1] === 0 ? 0.08 : 0.16) *
+        winterMultiplier *
+        libDiscount;
+
+      if (this.isPredator) cost += 0.06;
+      if (this.hasShield) cost += 0.022;
+      if (this.isArchitect) cost += 0.012;
+      if (this.hasConsciousness) cost += 0.015;
+      this.energy -= cost;
+
+      const learnProb = 0.006;
+      const attackPower = 22;
+      let activeNeighbors = 0;
+
+      for (const other of entities) {
+        if (other === this) continue;
+
+        const dx = other.x - this.x;
+        const dy = other.y - this.y;
+        const dist = Math.hypot(dx, dy);
+
+        if (this.isPredator) {
+          if (!other.isPredator && dist < this.visionRange) {
+            const attraction = other.hasShield ? 0.07 : 0.13;
+            this.vx += (dx / dist) * attraction;
+            this.vy += (dy / dist) * attraction;
+
+            if (
+              dist < this.radius + other.radius + 3 &&
+              this.attackCooldown === 0
+            ) {
+              this.attackCooldown = 18;
+              if (other.hasShield) {
+                other.energy -= attackPower * 0.25;
+                this.energy -= 6;
+                this.vx -= (dx / dist) * 2.5;
+                this.vy -= (dy / dist) * 2.5;
+                if (other.canSignal) other.emitSignal(true);
+              } else {
+                const stolen = Math.min(other.energy, attackPower);
+                other.energy -= stolen;
+                this.energy += stolen * 0.85;
+                if (other.canSignal) other.emitSignal(true);
+              }
+            }
+          }
+          continue;
+        }
+
+        if (other.isPredator && dist < this.visionRange) {
+          if (this.hasShield && activeNeighbors >= 1) {
+            this.vx += (dx / dist) * 0.04;
+            this.vy += (dy / dist) * 0.04;
+          } else {
+            this.vx -= (dx / dist) * 0.14;
+            this.vy -= (dy / dist) * 0.14;
+          }
+          continue;
+        }
+
+        if (!other.isPredator && dist > 0 && dist < 90) {
+          const sameType = this.dna[3] === other.dna[3];
+          let force = 0;
+          if (this.dna[0] === 0) {
+            force = sameType ? 0.032 : -0.02;
+          } else {
+            force = sameType ? -0.03 : 0.04;
+          }
+          if (dist < 12) force = -0.15;
+          this.vx += (dx / dist) * force;
+          this.vy += (dy / dist) * force;
+
+          if (this.dna[2] === 0 && other.dna[2] === 0 && dist < 50) {
+            activeNeighbors++;
+            ctx.beginPath();
+            ctx.moveTo(this.x, this.y);
+            ctx.lineTo(other.x, other.y);
+            ctx.strokeStyle = this.hasConsciousness
+              ? 'rgba(192, 132, 252, 0.36)'
+              : (this.hasShield || other.hasShield)
+                ? 'rgba(34, 211, 238, 0.34)'
+                : 'rgba(148, 163, 184, 0.20)';
+            ctx.lineWidth =
+              this.isColonyCore || this.hasConsciousness ? 1.5 : 1;
+            ctx.stroke();
+            this.energy += isWinter ? 0.045 : 0.025;
+
+            if (
+              this.isMulticellular &&
+              this.energy > other.energy + 20 &&
+              other.energy < 65
+            ) {
+              const transfer = isWinter ? 0.65 : 0.4;
+              this.energy -= transfer;
+              other.energy += transfer;
+            }
+            if (
+              this.hasMemory &&
+              other.hasMemory &&
+              other.memorySpot &&
+              !this.memorySpot
+            ) {
+              this.memorySpot = { ...other.memorySpot };
+            }
+            if (Math.random() < learnProb) {
+              const bitIndex = Math.floor(Math.random() * 12);
+              if (
+                bitIndex !== 8 &&
+                this.dna[bitIndex] !== other.dna[bitIndex]
+              ) {
+                other.dna[bitIndex] = this.dna[bitIndex];
+                other.updatePhenotype();
+                totalKnowledgeTransfers++;
+              }
+            }
+          }
+        }
+      }
+      if (this.isMulticellular && activeNeighbors >= 3) {
+        this.bondCycles++;
+        if (this.bondCycles > 150 && !this.isColonyCore) {
+          this.isColonyCore = true;
+          this.updatePhenotype();
+        }
+      } else {
+        this.bondCycles = Math.max(0, this.bondCycles - 2);
+        if (this.bondCycles === 0 && this.isColonyCore) {
+          this.isColonyCore = false;
+          this.updatePhenotype();
+        }
+      }
+
+      if (this.isArchitect && activeNeighbors >= 2 && this.energy > 140) {
+        this.buildCulturalLibrary();
+      }
+
+      if (nearLibrary && !this.isPredator) {
+        if (this.hasConsciousness && Math.random() < 0.08) {
+          ctx.beginPath();
+          ctx.moveTo(this.x, this.y);
+          ctx.lineTo(nearLibrary.x, nearLibrary.y);
+          ctx.strokeStyle = 'rgba(251, 191, 36, 0.35)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          const bitIdx = 4 + Math.floor(Math.random() * 8);
+          if (
+            bitIdx !== 8 &&
+            nearLibrary.storedDna[bitIdx] === 1 &&
+            this.dna[bitIdx] === 0
+          ) {
+            this.dna[bitIdx] = 1;
+            this.updatePhenotype();
+            totalLibraryDownloads++;
+            totalKnowledgeTransfers++;
+          }
+        }
+      }
+
+      if (
+        this.hasConsciousness &&
+        libraries.length > 0 &&
+        (isWinter || (cycles % YEAR_LENGTH) > SUMMER_LENGTH - 180)
+      ) {
+        let closestLib = null;
+        let minDist = Infinity;
+        for (const lib of libraries) {
+          const d = Math.hypot(lib.x - this.x, lib.y - this.y);
+          if (d < minDist) {
+            minDist = d;
+            closestLib = lib;
+          }
+        }
+        if (closestLib && minDist > 35) {
+          this.vx += ((closestLib.x - this.x) / minDist) * 0.07;
+          this.vy += ((closestLib.y - this.y) / minDist) * 0.07;
+        }
+      }
+
+      if (!this.isPredator && this.canSignal) {
+        for (const sig of signals) {
+          const dx = sig.x - this.x;
+          const dy = sig.y - this.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist > 15 && dist < sig.maxRadius) {
+            if (sig.danger) {
+              const dir = this.hasShield ? 0.09 : -0.09;
+              this.vx += (dx / dist) * dir;
+              this.vy += (dy / dist) * dir;
+            } else if (this.energy < 110) {
+              this.vx += (dx / dist) * 0.08;
+              this.vy += (dy / dist) * 0.08;
+            }
+          }
+        }
+      }
+
+      let foundFoodNearby = false;
+      let localFoodCount = 0;
+      if (!this.isPredator) {
+        for (let i = nutrients.length - 1; i >= 0; i--) {
+          const n = nutrients[i];
+          const dx = n.x - this.x;
+          const dy = n.y - this.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < this.visionRange) {
+            foundFoodNearby = true;
+            localFoodCount++;
+            const pull = this.dna[4] === 1 ? 0.12 : 0.08;
+            this.vx += (dx / dist) * pull;
+            this.vy += (dy / dist) * pull;
+          }
+          if (dist < this.radius + 4) {
+            const gain = this.isColonyCore ? 45 : 35;
+            this.energy = Math.min(
+              this.isColonyCore ? 260 : 160,
+              this.energy + gain
+            );
+            if (this.hasMemory) {
+              this.memorySpot = { x: n.x, y: n.y };
+            }
+            if (this.canSignal && localFoodCount >= 2) {
+              this.emitSignal(false);
+            }
+            nutrients.splice(i, 1);
+          }
+        }
+
+        if (
+          !foundFoodNearby &&
+          this.hasMemory &&
+          this.memorySpot &&
+          this.energy < 100
+        ) {
+          const dx = this.memorySpot.x - this.x;
+          const dy = this.memorySpot.y - this.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist > 18) {
+            this.vx += (dx / dist) * 0.065;
+            this.vy += (dy / dist) * 0.065;
+          } else if (isWinter) {
+            this.memorySpot = null;
+          }
+        }
+      }
+
+      const effectiveSpeed = this.isColonyCore
+        ? this.speed * 0.45
+        : this.speed;
+      const vel = Math.hypot(this.vx, this.vy);
+      if (vel > effectiveSpeed) {
+        this.vx = (this.vx / vel) * effectiveSpeed;
+        this.vy = (this.vy / vel) * effectiveSpeed;
+      }
+
+      this.x += this.vx;
+      this.y += this.vy;
+      if (this.x < 0) this.x = width;
+      if (this.x > width) this.x = 0;
+      if (this.y < 0) this.y = height;
+      if (this.y > height) this.y = 0;
+
+      const reproThreshold = this.isPredator
+        ? 175
+        : (this.isColonyCore ? 170 : 125);
+      const predCount = entities.filter(e => e.isPredator).length;
+      const canReproduce = this.isPredator
+        ? predCount < MAX_POPULATION * 0.25
+        : entities.length < MAX_POPULATION;
+
+      if (this.energy >= reproThreshold && canReproduce) {
+        this.energy -= this.isPredator ? 80 : 60;
+        const childDna = this.mutateDNA();
+        const child = new Entity(
+          this.x + 6,
+          this.y + 6,
+          childDna,
+          this.gen + 1
+        );
+        if (child.hasMemory && this.memorySpot) {
+          child.memorySpot = { ...this.memorySpot };
+        }
+        entities.push(child);
+      }
+    }
+
+    draw() {
+      if (this.hasShield && !this.isPredator) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius + 4, 0, Math.PI * 2);
+        ctx.strokeStyle = '#22d3ee';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+      if (this.isColonyCore) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius + 2.5, 0, Math.PI * 2);
+        ctx.strokeStyle = '#34d399';
+        ctx.lineWidth = 1.4;
+        ctx.stroke();
+      }
+      if (this.isPredator) {
+        const angle = Math.atan2(this.vy, this.vx);
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(angle);
+        ctx.beginPath();
+        ctx.moveTo(this.radius + 3, 0);
+        ctx.lineTo(-this.radius, -this.radius + 1);
+        ctx.lineTo(-this.radius, this.radius - 1);
+        ctx.closePath();
+        ctx.fillStyle = '#ef4444';
+        ctx.fill();
+        ctx.restore();
+      } else {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        if (this.hasMemory || this.hasConsciousness) {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, 1.7, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.fill();
+        }
+      }
+    }
+  }
+
+  function runCoArchitectAI() {
+    if (!chkAiObserver.checked || entities.length === 0) return;
+
+    const conscCount = entities.filter(e => e.hasConsciousness).length;
+    const libCount = libraries.length;
+    const predCount = entities.filter(e => e.isPredator).length;
+
+    if (libCount === 0 && entities.length > 120) {
+      addLog(
+        '🤖 [Co-Arquiteto IA]: Civilização densa sem Bibliotecas. Aguardando mutação Arquiteto [Bit 10].',
+        'ai'
+      );
+    } else if (libCount > 0 && conscCount > 15) {
+      addLog(
+        `🤖 [Co-Arquiteto IA]: ${libCount} Bibliotecas ativas guiando ${conscCount} mentes conscientes.`,
+        'ai'
+      );
+    } else if (predCount > 25) {
+      addLog(
+        `🤖 [Co-Arquiteto IA]: Alta pressão predatória (${predCount}). Escudos e sinais em alerta.`,
+        'ai'
+      );
+    }
+  }
+
+  function updateGenomeDatabase() {
+    const counts = {};
+    let coreCount = 0;
+    let shieldCount = 0;
+    let conscCount = 0;
+
+    for (const ent of entities) {
+      const code = ent.dna.join('');
+      counts[code] = (counts[code] || 0) + 1;
+      if (ent.isColonyCore) coreCount++;
+      if (ent.hasShield && !ent.isPredator) shieldCount++;
+      if (ent.hasConsciousness) conscCount++;
+    }
+
+    document.getElementById('stat-core').innerText = coreCount;
+    document.getElementById('stat-shield').innerText = shieldCount;
+    document.getElementById('stat-consc').innerText = conscCount;
+    document.getElementById('stat-libs').innerText = libraries.length;
+
+    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    const listEl = document.getElementById('genome-list');
+    if (sorted.length === 0) {
+      listEl.innerHTML = 'Vazio absoluto. Injete sementes para iniciar.';
+      return;
+    }
+
+    const total = entities.length;
+    let html = '';
+    for (const [code, count] of sorted.slice(0, 14)) {
+      const dnaArr = code.split('').map(Number);
+      const pct = Math.round((count / total) * 100);
+      const color = getColorFromDNA(dnaArr);
+      const traits = describeDNA(dnaArr);
+      html += `
+        <div class="genome-item">
+          <div class="genome-header">
+            <span class="genome-code">[${code}]</span>
+            <span class="genome-count">${count} (${pct}%)</span>
+          </div>
+          <div class="genome-traits">${traits}</div>
+          <div class="bar-bg">
+            <div class="bar-fill" style="width: ${pct}%; background: ${color};"></div>
+          </div>
+        </div>`;
+    }
+    listEl.innerHTML = html;
+  }
+
+  function injectCustomDNA(codeStr, x = width / 2, y = height / 2, qty = 8) {
+    const clean = codeStr.replace(/[^01]/g, '').padEnd(12, '0').slice(0, 12);
+    const dnaArr = clean.split('').map(Number);
+
+    for (let i = 0; i < qty; i++) {
+      entities.push(new Entity(
+        x + (Math.random() - 0.5) * 40,
+        y + (Math.random() - 0.5) * 40,
+        [...dnaArr],
+        1
+      ));
+    }
+    addLog(`Injetadas ${qty} sementes de 12 bits [${clean}]`, 'highlight');
+  }
+
+  function spawnPredators() {
+    const predDna = [0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0];
+    for (let i = 0; i < 8; i++) {
+      entities.push(new Entity(
+        Math.random() * width,
+        Math.random() * height,
+        [...predDna],
+        1
+      ));
+    }
+    addLog(
+      '⚔️ 8 Predadores introduzidos para testar a defesa da civilização.',
+      'winter'
+    );
+  }
+
+  function exportDatabase() {
+    const counts = {};
+    for (const ent of entities) {
+      const code = ent.dna.join('');
+      counts[code] = (counts[code] || 0) + 1;
+    }
+
+    const payload = {
+      projeto: 'Universo Zero - Fase 7 (Civilização, Bibliotecas Culturais & Consciência 12 Bits)',
+      timestamp: new Date().toISOString(),
+      estacao_atual: isWinter ? 'Inverno Cósmico' : 'Verão Cósmico',
+      metricas_globais: {
+        ciclos_tempo: cycles,
+        invernos_vencidos: wintersSurvived,
+        populacao_atual: entities.length,
+        bibliotecas_culturais_ativas: libraries.length,
+        downloads_culturais_realizados: totalLibraryDownloads,
+        mentes_conscientes_ativas: entities.filter(e => e.hasConsciousness).length,
+        nucleos_colonia_ativos: entities.filter(e => e.isColonyCore).length,
+        defensores_escudo_ativos: entities.filter(e => e.hasShield && !e.isPredator).length,
+        trocas_conhecimento_bits: totalKnowledgeTransfers
+      },
+      acervo_bibliotecas: libraries.map((l, idx) => ({
+        id: idx + 1,
+        genoma_arquivado: l.storedDna.join(''),
+        geracao_fundadora: l.creatorGen
+      })),
+      ranking_genomas_12bits: Object.entries(counts)
+        .sort((a, b) => b[1] - a[1])
+        .map(([codigo, quantidade]) => ({
+          codigo_binario: codigo,
+          caracteristicas: describeDNA(codigo.split('').map(Number)),
+          individuos: quantidade
+        }))
+    };
+
+    const blob = new Blob(
+      [JSON.stringify(payload, null, 2)],
+      { type: 'application/json' }
+    );
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `universo_fase7_ciclo_${cycles}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    addLog('Dados da Civilização (Era 7 - 12 bits) exportados!', 'highlight');
+  }
+  function bigBang() {
+    generateOases();
+    const cx = width / 2;
+    const cy = height / 2;
+
+    for (let i = 0; i < 55; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = Math.random() * 65;
+      const ent = new Entity(
+        cx + Math.cos(angle) * dist,
+        cy + Math.sin(angle) * dist
+      );
+      ent.vx = Math.cos(angle) * 3;
+      ent.vy = Math.sin(angle) * 3;
+      entities.push(ent);
+    }
+    addLog(
+      'BIG BANG! 55 sementes primordiais de 12 bits liberadas.',
+      'highlight'
+    );
+  }
+
+  function resetUniverse() {
+    entities = [];
+    nutrients = [];
+    signals = [];
+    libraries = [];
+    cycles = 0;
+    maxGen = 0;
+    totalMutations = 0;
+    totalKnowledgeTransfers = 0;
+    totalSignalsEmitted = 0;
+    totalLibraryDownloads = 0;
+    wintersSurvived = 0;
+    isWinter = false;
+    generateOases();
+    updateGenomeDatabase();
+    addLog('Universo colapsado de volta ao vazio absoluto.');
+  }
+
+  window.UniversoAPI = {
+    versao: '7.0-civilizacao-12bits',
+    injetarGenoma: (
+      codigo12Bits,
+      quantidade = 8,
+      x = width / 2,
+      y = height / 2
+    ) => {
+      injectCustomDNA(String(codigo12Bits), x, y, quantidade);
+      return `Genoma ${codigo12Bits} injetado com sucesso.`;
+    },
+    alternarCoArquitetoIA: ativo => {
+      chkAiObserver.checked = Boolean(ativo);
+      return `Co-Arquiteto IA ${ativo ? 'ativado' : 'desativado'}.`;
+    },
+    obterEstado: () => ({
+      versao: '7.0-civilizacao-12bits',
+      estacao: isWinter ? 'inverno' : 'verao',
+      ciclos: cycles,
+      populacao: entities.length,
+      bibliotecas: libraries.length,
+      conscienciasAtivas: entities.filter(e => e.hasConsciousness).length
+    }),
+    simularBigBang: bigBang,
+    zerarUniverso: resetUniverse
+  };
+
+  canvas.addEventListener('mousedown', (e) => {
+    for (let i = 0; i < 6; i++) {
+      entities.push(new Entity(
+        e.clientX + (Math.random() - 0.5) * 30,
+        e.clientY + (Math.random() - 0.5) * 30
+      ));
+    }
+    addLog('Pulso de 6 sementes de 12 bits injetado no espaço.');
+  });
+
+  document.getElementById('btn-inject-dna').addEventListener('click', () => {
+    injectCustomDNA(document.getElementById('input-dna').value);
+  });
+  document.getElementById('btn-bigbang').addEventListener('click', bigBang);
+  document.getElementById('btn-spawn-pred').addEventListener('click', spawnPredators);
+  document.getElementById('btn-reset').addEventListener('click', resetUniverse);
+  document.getElementById('btn-export').addEventListener('click', exportDatabase);
+
+  function loop() {
+    ctx.fillStyle = isWinter
+      ? 'rgba(4, 10, 22, 0.38)'
+      : 'rgba(2, 3, 7, 0.35)';
+    ctx.fillRect(0, 0, width, height);
+
+    if (entities.length > 0) {
+      cycles++;
+      if (cycles % 450 === 0) runCoArchitectAI();
+
+      const yearPos = cycles % YEAR_LENGTH;
+      const nowWinter = yearPos >= SUMMER_LENGTH;
+
+      if (nowWinter && !isWinter) {
+        isWinter = true;
+        addLog(
+          '❄️ INVERNO CÓSMICO! Consciências migrando para as Bibliotecas Culturais.',
+          'winter'
+        );
+      } else if (!nowWinter && isWinter) {
+        isWinter = false;
+        wintersSurvived++;
+        generateOases();
+        addLog(
+          `☀️ VERÃO CÓSMICO! ${entities.length} sobreviventes. Novos Oásis surgiram!`,
+          'highlight'
+        );
+      }
+
+      const seasonBox = document.getElementById('season-box');
+      const seasonName = document.getElementById('season-name');
+      const seasonTimer = document.getElementById('season-timer');
+
+      if (isWinter) {
+        seasonBox.className = 'season-banner season-winter';
+        seasonName.innerText = '❄️ INVERNO CÓSMICO';
+        const pct = Math.round(
+          ((yearPos - SUMMER_LENGTH) / (YEAR_LENGTH - SUMMER_LENGTH)) * 100
+        );
+        seasonTimer.innerText = pct + '%';
+      } else {
+        seasonBox.className = 'season-banner season-summer';
+        seasonName.innerText = '☀️ VERÃO CÓSMICO';
+        const pct = Math.round((yearPos / SUMMER_LENGTH) * 100);
+        seasonTimer.innerText = pct + '%';
+      }
+    }
+
+    if (!isWinter) {
+      for (const o of oases) {
+        ctx.beginPath();
+        ctx.arc(o.x, o.y, o.radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.035)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(16, 185, 129, 0.12)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+
+    for (const lib of libraries) {
+      ctx.beginPath();
+      ctx.arc(lib.x, lib.y, lib.radius, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(192, 132, 252, 0.03)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.18)';
+      ctx.setLineDash([4, 4]);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.save();
+      ctx.translate(lib.x, lib.y);
+      ctx.rotate(cycles * 0.01);
+      ctx.beginPath();
+      ctx.moveTo(0, -9);
+      ctx.lineTo(9, 0);
+      ctx.lineTo(0, 9);
+      ctx.lineTo(-9, 0);
+      ctx.closePath();
+      ctx.fillStyle = '#fbbf24';
+      ctx.fill();
+      ctx.strokeStyle = '#c084fc';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    for (let i = signals.length - 1; i >= 0; i--) {
+      const s = signals[i];
+      s.radius += 2.3;
+      s.alpha -= 0.008;
+      if (s.alpha <= 0 || s.radius >= s.maxRadius) {
+        signals.splice(i, 1);
+        continue;
+      }
+
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+      ctx.strokeStyle = s.danger
+        ? `rgba(248, 113, 113, ${s.alpha})`
+        : `rgba(251, 191, 36, ${s.alpha})`;
+      ctx.lineWidth = s.danger ? 1.5 : 1.2;
+      ctx.stroke();
+    }
+
+    const energyRate = parseInt(ctrlEng.value);
+    const spawnProb = isWinter
+      ? energyRate * 0.004
+      : energyRate * 0.055;
+
+    if (Math.random() < spawnProb && nutrients.length < 150) {
+      if (!isWinter && oases.length > 0 && Math.random() < 0.85) {
+        const o = oases[Math.floor(Math.random() * oases.length)];
+        const angle = Math.random() * Math.PI * 2;
+        const r = Math.random() * o.radius;
+        nutrients.push({
+          x: o.x + Math.cos(angle) * r,
+          y: o.y + Math.sin(angle) * r
+        });
+      } else {
+        nutrients.push({
+          x: Math.random() * width,
+          y: Math.random() * height
+        });
+      }
+    }
+
+    ctx.fillStyle = '#10b981';
+    for (const n of nutrients) {
+      ctx.fillRect(n.x, n.y, 2.2, 2.2);
+    }
+
+    for (let i = entities.length - 1; i >= 0; i--) {
+      const ent = entities[i];
+      ent.update();
+      ent.draw();
+      if (ent.energy <= 0) {
+        if (Math.random() < 0.5) {
+          nutrients.push({ x: ent.x, y: ent.y });
+        }
+        entities.splice(i, 1);
+      }
+    }
+
+    document.getElementById('stat-time').innerText = cycles;
+    document.getElementById('stat-pop').innerText = entities.length;
+    if (cycles % 20 === 0) {
+      updateGenomeDatabase();
+    }
+    requestAnimationFrame(loop);
+  }
+
+  loop();
+</script>
+</body>
+</html>
