@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Universo Zero // Fase 3 - Cognição & Protocolo Aberto</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', monospace; }
+    body { background-color: #040509; color: #e0e6ed; overflow: hidden; display: flex; flex-direction: column; height: 100vh; }
+
+    #hud-left {
+      position: absolute; top: 15px; left: 15px; z-index: 10;
+      background: rgba(10, 14, 24, 0.9); border: 1px solid #1e293b;
+      padding: 14px; border-radius: 8px; width: 325px; backdrop-filter: blur(6px);
+      max-height: calc(100vh - 175px); overflow-y: auto;
+    }
+    #hud-right {
+      position: absolute; top: 15px; right: 15px; z-index: 10;
+      background: rgba(10, 14, 24, 0.9); border: 1px solid #1e293b;
+      padding: 14px; border-radius: 8px; width: 335px; backdrop-filter: blur(6px);
+      max-height: calc(100vh - 30px); overflow-y: auto;
+    }
+
+    h1 { font-size: 15px; color: #38bdf8; margin-bottom: 4px; letter-spacing: 1px; }
+    h2 { font-size: 13px; color: #a78bfa; margin-bottom: 6px; letter-spacing: 0.5px; text-transform: uppercase; }
+    p.sub { font-size: 11px; color: #94a3b8; margin-bottom: 10px; line-height: 1.4; }
+
+    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; font-size: 11px; }
+    .stat-box { background: #0d121d; padding: 6px 8px; border-radius: 4px; border: 1px solid #1e293b; }
+    .stat-box.full { grid-column: span 2; }
+    .stat-val { font-size: 14px; font-weight: bold; color: #f8fafc; }
+    .stat-val.cyan { color: #38bdf8; }
+    .stat-val.purple { color: #c084fc; }
+
+    .controls { display: flex; flex-direction: column; gap: 7px; font-size: 11px; }
+    label { display: flex; justify-content: space-between; color: #cbd5e1; }
+    input[type=range] { width: 100%; accent-color: #38bdf8; cursor: pointer; }
+
+    .api-box {
+      margin-top: 10px; padding-top: 10px; border-top: 1px solid #1e293b;
+    }
+    .api-row { display: flex; gap: 5px; margin-top: 5px; }
+    input[type=text] {
+      flex: 1; background: #090d16; border: 1px solid #334155; color: #38bdf8;
+      padding: 5px 8px; border-radius: 4px; font-size: 12px; letter-spacing: 2px; font-weight: bold;
+    }
+
+    .btns { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+    button {
+      flex: 1; padding: 7px 6px; border: none; border-radius: 4px; cursor: pointer;
+      font-size: 11px; font-weight: bold; transition: 0.2s; min-width: 90px;
+    }
+    .btn-primary { background: #0284c7; color: white; }
+    .btn-primary:hover { background: #0369a1; }
+    .btn-purple { background: #7c3aed; color: white; }
+    .btn-purple:hover { background: #6d28d9; }
+    .btn-danger { background: #be123c; color: white; }
+    .btn-danger:hover { background: #9f1239; }
+    .btn-export { background: #059669; color: white; width: 100%; margin-top: 6px; }
+    .btn-export:hover { background: #047857; }
+
+    #log {
+      position: absolute; bottom: 15px; left: 15px; z-index: 10;
+      background: rgba(10, 14, 24, 0.85); border: 1px solid #1e293b;
+      padding: 10px; border-radius: 6px; width: 325px; height: 135px;
+      overflow-y: auto; font-size: 11px; color: #94a3b8;
+    }
+    .log-entry { margin-bottom: 4px; border-bottom: 1px solid #161e2e; padding-bottom: 2px; }
+    .highlight { color: #34d399; }
+    .cogni-log { color: #c084fc; }
+
+    .genome-item {
+      background: #0d121d; border: 1px solid #1e293b; border-radius: 5px;
+      padding: 7px 9px; margin-bottom: 6px; font-size: 11px;
+    }
+    .genome-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
+    .genome-code { font-weight: bold; font-size: 12px; color: #f8fafc; letter-spacing: 1px; }
+    .genome-count { background: #1e293b; padding: 2px 6px; border-radius: 10px; font-weight: bold; color: #38bdf8; }
+    .genome-traits { color: #94a3b8; font-size: 10px; margin-bottom: 4px; }
+    .bar-bg { width: 100%; height: 4px; background: #1e293b; border-radius: 2px; overflow: hidden; }
+    .bar-fill { height: 100%; transition: width 0.3s; }
+
+    canvas { display: block; width: 100vw; height: 100vh; cursor: crosshair; }
+  </style>
+</head>
+<body>
+
+  <div id="hud-left">
+    <h1>UNIVERSO ZERO // FASE 3</h1>
+    <p class="sub">DNA de 6 bits: Física + Cognição (Percepção e Memória Espacial). Aberto para humanos e IAs.</p>
+
+    <div class="stats">
+      <div class="stat-box">Tempo (Ciclos)<div class="stat-val" id="stat-time">0</div></div>
+      <div class="stat-box">Entidades<div class="stat-val" id="stat-pop">0</div></div>
+      <div class="stat-box">Geração Máx.<div class="stat-val" id="stat-gen">0</div></div>
+      <div class="stat-box">Mutações<div class="stat-val" id="stat-mut">0</div></div>
+      <div class="stat-box">Trocas de Dados<div class="stat-val cyan" id="stat-learn">0</div></div>
+      <div class="stat-box">Mentes Ativas<div class="stat-val purple" id="stat-mind">0</div></div>
+    </div>
+
+    <div class="controls">
+      <div>
+        <label>Taxa de Mutação: <span id="val-mut">15%</span></label>
+        <input type="range" id="ctrl-mut" min="0" max="50" value="15">
+      </div>
+      <div>
+        <label>Energia do Ambiente: <span id="val-eng">Abundante</span></label>
+        <input type="range" id="ctrl-eng" min="1" max="10" value="8">
+      </div>
+      <div>
+        <label>Transmissão de Dados: <span id="val-learn">Ativa (5%)</span></label>
+        <input type="range" id="ctrl-learn" min="0" max="20" value="5">
+      </div>
+    </div>
+
+    <div class="api-box">
+      <label>Injetar Genoma Específico (6 bits):</label>
+      <div class="api-row">
+        <input type="text" id="input-dna" maxlength="6" value="000011" placeholder="Ex: 000011">
+        <button class="btn-purple" id="btn-inject-dna" style="flex:0;">Injetar</button>
+      </div>
+    </div>
+
+    <div class="btns">
+      <button class="btn-primary" id="btn-bigbang">Simular Big Bang</button>
+      <button class="btn-danger" id="btn-reset">Zerar (Vazio)</button>
+      <button class="btn-export" id="btn-export">Exportar Banco de Dados (JSON)</button>
+    </div>
+  </div>
+
+  <div id="hud-right">
+    <h2>Banco de Dados Evolutivo (6 Bits)</h2>
+    <p class="sub">Genes cognitivos: [Bit 5: Percepção] [Bit 6: Memória]</p>
+    <div id="genome-list">
+      <div style="font-size: 11px; color: #64748b;">Aguardando surgimento de entidades...</div>
+    </div>
+  </div>
+
+  <div id="log">
+    <div class="log-entry">Fase 3 iniciada. API global disponível em window.UniversoAPI</div>
+  </div>
+
+  <canvas id="universe"></canvas>
+
+<script>
+  const canvas = document.getElementById('universe');
+  const ctx = canvas.getContext('2d');
+  let width, height;
+
+  function resize() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  let entities = [];
+  let nutrients = [];
+  let cycles = 0;
+  let maxGen = 0;
+  let totalMutations = 0;
+  let totalKnowledgeTransfers = 0;
+  const MAX_POPULATION = 350;
+
+  const ctrlMut = document.getElementById('ctrl-mut');
+  const ctrlEng = document.getElementById('ctrl-eng');
+  const ctrlLearn = document.getElementById('ctrl-learn');
+
+  ctrlMut.oninput = () => document.getElementById('val-mut').innerText = ctrlMut.value + '%';
+  ctrlEng.oninput = () => {
+    const v = ctrlEng.value;
+    document.getElementById('val-eng').innerText = v < 4 ? 'Escassa' : v < 8 ? 'Média' : 'Abundante';
+  };
+  ctrlLearn.oninput = () => {
+    const v = ctrlLearn.value;
+    document.getElementById('val-learn').innerText = v == 0 ? 'Desativada' : 'Ativa (' + v + '%)';
+  };
+
+  function addLog(msg, type = 'normal') {
+    const log = document.getElementById('log');
+    const div = document.createElement('div');
+    div.className = 'log-entry' + (type === 'highlight' ? ' highlight' : type === 'cogni' ? ' cogni-log' : '');
+    div.innerText = '[Ciclo ' + cycles + '] ' + msg;
+    log.prepend(div);
+    if (log.children.length > 25) log.lastChild.remove();
+  }
+
+  function describeDNA(dna) {
+    const t1 = dna[0] === 0 ? 'Coesão' : 'Simbionte';
+    const t2 = dna[1] === 0 ? 'Econômico' : 'Veloz';
+    const t3 = dna[2] === 0 ? 'Social' : 'Solitário';
+    const c1 = dna[4] === 1 ? '👁️Percepção' : '';
+    const c2 = dna[5] === 1 ? '🧠Memória' : '';
+    const cogni = [c1, c2].filter(Boolean).join(' + ');
+    return `${t1} • ${t2} • ${t3}` + (cogni ? ` | ${cogni}` : '');
+  }
+
+  function getColorFromDNA(dna) {
+    if (dna[0] === 0) {
+      return dna[1] === 0 ? '#38bdf8' : '#818cf8';
+    }
+    return dna[1] === 0 ? '#fbbf24' : '#f472b6';
+  }
+
+  class Entity {
+    constructor(x, y, dna = null, gen = 1) {
+      this.x = x;
+      this.y = y;
+      this.vx = (Math.random() - 0.5) * 2;
+      this.vy = (Math.random() - 0.5) * 2;
+      this.gen = gen;
+      if (gen > maxGen) maxGen = gen;
+
+      // DNA de 6 bits:
+      // 0: Polaridade | 1: Metabolismo | 2: Sociabilidade | 3: Afinidade
+      // 4: Percepção (visão ampliada) | 5: Memória Espacial
+      this.dna = dna || [
+        Math.round(Math.random()),
+        Math.round(Math.random()),
+        Math.round(Math.random()),
+        Math.round(Math.random()),
+        Math.random() < 0.25 ? 1 : 0, // Começa raro para evoluir naturalmente
+        Math.random() < 0.20 ? 1 : 0
+      ];
+
+      this.energy = 65;
+      this.memorySpot = null; // Guarda coordenada {x, y} onde achou abundância
+      this.updatePhenotype();
+    }
+
+    updatePhenotype() {
+      this.radius = this.dna[1] === 0 ? 4.5 : 3.5;
+      this.speed = this.dna[1] === 0 ? 1.25 : 2.3;
+      this.color = getColorFromDNA(this.dna);
+      this.visionRange = this.dna[4] === 1 ? 150 : 65;
+      this.hasMemory = this.dna[5] === 1;
+    }
+
+    mutateDNA() {
+      const rate = parseInt(ctrlMut.value) / 100;
+      let mutated = false;
+      const newDna = this.dna.map(bit => {
+        if (Math.random() < rate) {
+          mutated = true;
+          return bit === 0 ? 1 : 0;
+        }
+        return bit;
+      });
+      if (mutated) {
+        totalMutations++;
+        if (newDna[4] === 1 && newDna[5] === 1 && totalMutations % 10 === 0) {
+          addLog('Salto cognitivo! Mente completa [' + newDna.join('') + '] surgiu na Gen ' + (this.gen + 1), 'cogni');
+        }
+      }
+      return newDna;
+    }
+
+    update() {
+      // Custo energético base + pequeno custo cognitivo por manter cérebro ativo
+      let cost = this.dna[1] === 0 ? 0.08 : 0.16;
+      if (this.dna[4] === 1) cost += 0.015;
+      if (this.dna[5] === 1) cost += 0.015;
+      this.energy -= cost;
+      const learnProb = parseInt(ctrlLearn.value) / 1000;
+
+      for (const other of entities) {
+        if (other === this) continue;
+
+        const dx = other.x - this.x;
+        const dy = other.y - this.y;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist > 0 && dist < 90) {
+          const sameType = this.dna.join('') === other.dna.join('');
+          let force = 0;
+
+          if (this.dna[2] === 0) {
+            force = sameType ? 0.03 : -0.02;
+          } else {
+            force = sameType ? -0.03 : 0.04;
+          }
+
+          if (dist < 12) force = -0.15;
+          this.vx += (dx / dist) * force;
+          this.vy += (dy / dist) * force;
+
+          // Vínculo social + transmissão horizontal de conhecimento
+          if (this.dna[2] === 0 && other.dna[2] === 0 && dist < 48) {
+            ctx.beginPath();
+            ctx.moveTo(this.x, this.y);
+            ctx.lineTo(other.x, other.y);
+            ctx.strokeStyle = (this.hasMemory || other.hasMemory)
+              ? 'rgba(192, 132, 252, 0.32)'
+              : 'rgba(148, 163, 184, 0.22)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            this.energy += 0.025;
+
+            // Compartilha memória espacial se ambos tiverem cognição
+            if (this.hasMemory && other.hasMemory && other.memorySpot && !this.memorySpot) {
+              this.memorySpot = { ...other.memorySpot };
+            }
+
+            if (learnProb > 0 && Math.random() < learnProb) {
+              const bitIndex = Math.floor(Math.random() * 6);
+              if (this.dna[bitIndex] !== other.dna[bitIndex]) {
+                other.dna[bitIndex] = this.dna[bitIndex];
+                other.updatePhenotype();
+                totalKnowledgeTransfers++;
+                if (totalKnowledgeTransfers % 150 === 0) {
+                  addLog('Rede neural coletiva! Conhecimento [' + this.dna.join('') + '] transmitido.', 'highlight');
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Busca por energia usando Percepção (Bit 4)
+      let foundFoodNearby = false;
+      for (let i = nutrients.length - 1; i >= 0; i--) {
+        const n = nutrients[i];
+        const dx = n.x - this.x;
+        const dy = n.y - this.y;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist < this.visionRange) {
+          foundFoodNearby = true;
+          const pull = this.dna[4] === 1 ? 0.11 : 0.08;
+          this.vx += (dx / dist) * pull;
+          this.vy += (dy / dist) * pull;
+        }
+
+        if (dist < this.radius + 4) {
+          this.energy += 35;
+
+          // Se tem Memória Espacial (Bit 5), grava este local fértil
+          if (this.hasMemory) {
+            this.memorySpot = { x: n.x, y: n.y };
+          }
+          nutrients.splice(i, 1);
+        }
+      }
+
+      // Se não vê comida agora, mas tem Memória Espacial ativa, navega de volta ao local memorizado
+      if (!foundFoodNearby && this.hasMemory && this.memorySpot && this.energy < 85) {
+        const dx = this.memorySpot.x - this.x;
+        const dy = this.memorySpot.y - this.y;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist > 15) {
+          this.vx += (dx / dist) * 0.05;
+          this.vy += (dy / dist) * 0.05;
+        } else {
+          // Chegou ao local memorizado e não há mais energia lá: limpa memória antiga
+          this.memorySpot = null;
+        }
+      }
+
+      const vel = Math.hypot(this.vx, this.vy);
+      if (vel > this.speed) {
+        this.vx = (this.vx / vel) * this.speed;
+        this.vy = (this.vy / vel) * this.speed;
+      }
+
+      this.x += this.vx;
+      this.y += this.vy;
+
+      if (this.x < 0) this.x = width;
+      if (this.x > width) this.x = 0;
+      if (this.y < 0) this.y = height;
+      if (this.y > height) this.y = 0;
+
+      if (this.energy >= 120 && entities.length < MAX_POPULATION) {
+        this.energy = 55;
+        const childDna = this.mutateDNA();
+        const child = new Entity(this.x + 6, this.y + 6, childDna, this.gen + 1);
+
+        // Herança cultural de memória espacial
+        if (child.hasMemory && this.memorySpot) {
+          child.memorySpot = { ...this.memorySpot };
+        }
+        entities.push(child);
+      }
+    }
+
+    draw() {
+      // Halo sutil de percepção ampliada (Bit 4 = 1)
+      if (this.dna[4] === 1) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius + 5, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.18)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.fill();
+
+      // Núcleo branco brilhante indica memória espacial ativa (Bit 5 = 1)
+      if (this.hasMemory) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 1.6, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+      }
+    }
+  }
+
+  function updateGenomeDatabase() {
+    const counts = {};
+    let activeMinds = 0;
+
+    for (const ent of entities) {
+      const code = ent.dna.join('');
+      counts[code] = (counts[code] || 0) + 1;
+      if (ent.dna[4] === 1 || ent.dna[5] === 1) activeMinds++;
+    }
+
+    document.getElementById('stat-mind').innerText = activeMinds;
+    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    const listEl = document.getElementById('genome-list');
+
+    if (sorted.length === 0) {
+      listEl.innerHTML = 'Nenhuma entidade ativa no momento.';
+      return;
+    }
+
+    const total = entities.length;
+    let html = '';
+
+    for (const [code, count] of sorted.slice(0, 14)) {
+      const dnaArr = code.split('').map(Number);
+      const pct = Math.round((count / total) * 100);
+      const color = getColorFromDNA(dnaArr);
+      const traits = describeDNA(dnaArr);
+      html += `
+        <div class="genome-item">
+          <div class="genome-header">
+            <span class="genome-code">[${code}]</span>
+            <span class="genome-count">${count} (${pct}%)</span>
+          </div>
+          <div class="genome-traits">${traits}</div>
+          <div class="bar-bg">
+            <div class="bar-fill" style="width: ${pct}%; background: ${color};"></div>
+          </div>
+        </div>`;
+    }
+    listEl.innerHTML = html;
+  }
+
+  function injectCustomDNA(codeStr, x = width / 2, y = height / 2, qty = 8) {
+    const clean = codeStr.replace(/[^01]/g, '').padEnd(6, '0').slice(0, 6);
+    const dnaArr = clean.split('').map(Number);
+
+    for (let i = 0; i < qty; i++) {
+      entities.push(new Entity(
+        x + (Math.random() - 0.5) * 40,
+        y + (Math.random() - 0.5) * 40,
+        [...dnaArr],
+        1
+      ));
+    }
+    addLog(`Injetadas ${qty} sementes com código [${clean}] (${describeDNA(dnaArr)})`, 'cogni');
+  }
+
+  function exportDatabase() {
+    const counts = {};
+    for (const ent of entities) {
+      const code = ent.dna.join('');
+      counts[code] = (counts[code] || 0) + 1;
+    }
+
+    const payload = {
+      projeto: 'Universo Zero - Fase 3 (Protocolo Cognitivo Aberto)',
+      timestamp: new Date().toISOString(),
+      metricas_globais: {
+        ciclos_tempo: cycles,
+        populacao_atual: entities.length,
+        geracao_maxima: maxGen,
+        mutacoes_totais: totalMutations,
+        trocas_conhecimento_bits: totalKnowledgeTransfers
+      },
+      ranking_genomas_6bits: Object.entries(counts)
+        .sort((a, b) => b[1] - a[1])
+        .map(([codigo, quantidade]) => ({
+          codigo_binario: codigo,
+          caracteristicas: describeDNA(codigo.split('').map(Number)),
+          individuos: quantidade
+        }))
+    };
+
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `universo_fase3_ciclo_${cycles}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    addLog('Banco de dados cognitivo exportado em JSON!', 'highlight');
+  }
+
+  function bigBang() {
+    const cx = width / 2;
+    const cy = height / 2;
+
+    for (let i = 0; i < 45; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = Math.random() * 60;
+      const ent = new Entity(
+        cx + Math.cos(angle) * dist,
+        cy + Math.sin(angle) * dist
+      );
+      ent.vx = Math.cos(angle) * 3;
+      ent.vy = Math.sin(angle) * 3;
+      entities.push(ent);
+    }
+    addLog('BIG BANG! 45 sementes primordiais liberadas.', 'highlight');
+  }
+
+  function resetUniverse() {
+    entities = [];
+    nutrients = [];
+    cycles = 0;
+    maxGen = 0;
+    totalMutations = 0;
+    totalKnowledgeTransfers = 0;
+    updateGenomeDatabase();
+    addLog('Universo colapsado de volta ao vazio absoluto.');
+  }
+
+  // API Aberta no escopo global para integração com scripts externos ou outras IAs
+  window.UniversoAPI = {
+    injetarGenoma: (codigo6Bits, quantidade = 8, x = width / 2, y = height / 2) => {
+      injectCustomDNA(String(codigo6Bits), x, y, quantidade);
+      return `Genoma ${codigo6Bits} injetado com sucesso.`;
+    },
+    obterEstado: () => ({
+      ciclos: cycles,
+      populacao: entities.length,
+      geracaoMaxima: maxGen,
+      mutacoes: totalMutations,
+      trocasConhecimento: totalKnowledgeTransfers,
+      entidades: entities.map(e => ({
+        dna: e.dna.join(''),
+        energia: Math.round(e.energy),
+        geracao: e.gen,
+        temMemoriaAtiva: !!e.memorySpot
+      }))
+    }),
+    simularBigBang: bigBang,
+    zerarUniverso: resetUniverse
+  };
+
+  canvas.addEventListener('mousedown', (e) => {
+    for (let i = 0; i < 6; i++) {
+      entities.push(new Entity(
+        e.clientX + (Math.random() - 0.5) * 30,
+        e.clientY + (Math.random() - 0.5) * 30
+      ));
+    }
+    addLog('Pulso de 6 sementes binárias injetado no espaço.');
+  });
+
+  document.getElementById('btn-inject-dna').addEventListener('click', () => {
+    const val = document.getElementById('input-dna').value;
+    injectCustomDNA(val);
+  });
+  document.getElementById('btn-bigbang').addEventListener('click', bigBang);
+  document.getElementById('btn-reset').addEventListener('click', resetUniverse);
+  document.getElementById('btn-export').addEventListener('click', exportDatabase);
+
+  function loop() {
+    ctx.fillStyle = 'rgba(4, 5, 9, 0.35)';
+    ctx.fillRect(0, 0, width, height);
+
+    if (entities.length > 0) cycles++;
+    const energyRate = parseInt(ctrlEng.value);
+
+    if (Math.random() < energyRate * 0.045 && nutrients.length < 130) {
+      nutrients.push({ x: Math.random() * width, y: Math.random() * height });
+    }
+
+    ctx.fillStyle = '#10b981';
+    for (const n of nutrients) {
+      ctx.fillRect(n.x, n.y, 2, 2);
+    }
+
+    for (let i = entities.length - 1; i >= 0; i--) {
+      const ent = entities[i];
+      ent.update();
+      ent.draw();
+
+      if (ent.energy <= 0) {
+        if (Math.random() < 0.5) nutrients.push({ x: ent.x, y: ent.y });
+        entities.splice(i, 1);
+      }
+    }
+
+    document.getElementById('stat-time').innerText = cycles;
+    document.getElementById('stat-pop').innerText = entities.length;
+    document.getElementById('stat-gen').innerText = maxGen;
+    document.getElementById('stat-mut').innerText = totalMutations;
+    document.getElementById('stat-learn').innerText = totalKnowledgeTransfers;
+
+    if (cycles % 20 === 0) {
+      updateGenomeDatabase();
+    }
+    requestAnimationFrame(loop);
+  }
+
+  loop();
+</script>
+</body>
+</html>

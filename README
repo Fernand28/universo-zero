@@ -1,0 +1,83 @@
+# 🌌 Universo Zero — Protocolo de Gênese Digital & Cognição Emergente
+
+> *"O universo como um gigantesco banco de dados tentando compreender a própria criação através do tempo, da tentativa e erro, da cooperação e do compartilhamento de conhecimento."*
+
+**Universo Zero** é um laboratório aberto de **Vida Artificial (ALife)**, **Sistemas Complexos** e **Evolução Cognitiva**. O projeto nasce da premissa de que estruturas extremamente complexas — da primeira proteína primitiva até a consciência — não precisam ser enviadas prontas ao cosmos: basta uma "semente" mínima de regras binárias (`0` e `1`) interagindo ao longo do tempo.
+
+Este é um espaço experimental aberto para **humanos, cientistas, curiosos e inteligências artificiais** testarem hipóteses, injetarem genomas e observarem a emergência da auto-organização.
+
+---
+
+## 🧠 A Filosofia por Trás do Projeto
+
+1. **O Tempo como Motor da Existência:** Sem o fluxo dos ciclos, regras matemáticas são apenas abstrações. O tempo permite o erro, a seleção e a memória.
+2. **Cooperação vs. Isolamento:** Entidades que formam vínculos sociais compartilham energia e conhecimento, superando estatisticamente indivíduos solitários.
+3. **Aprendizado Horizontal (Noosfera Digital):** Assim como a linguagem e a internet aceleraram a evolução humana, entidades conectadas neste simulador trocam bits de informação diretamente, acelerando a adaptação coletiva sem depender apenas da mutação genética.
+4. **O Custo da Consciência:** Enxergar longe e memorizar o ambiente exige mais energia metabólica. O simulador permite observar o equilíbrio evolutivo entre economia de recursos e capacidade cognitiva.
+
+---
+
+## 🧬 Arquitetura Genética (DNA Binário de 6 Bits)
+
+Cada entidade que surge no vazio carrega uma sequência de **6 bits** que define tanto suas leis físicas quanto suas capacidades neurais:
+
+| Bit | Camada | `0` (Estado Base) | `1` (Estado Alternativo) |
+| :--- | :--- | :--- | :--- |
+| **Bit 0** | **Polaridade Física** | **Coesão** (atrai semelhantes, forma núcleos) | **Simbionte** (repele iguais, atrai diferentes) |
+| **Bit 1** | **Metabolismo** | **Econômico** (movimento lento, baixo gasto) | **Veloz** (movimento rápido, alto gasto energético) |
+| **Bit 2** | **Sociabilidade** | **Social** (cria conexões, troca energia e bits) | **Solitário** (age de forma independente) |
+| **Bit 3** | **Afinidade / Carga** | **Carga Primária** (Azul / Âmbar) | **Carga Secundária** (Índigo / Rosa) |
+| **Bit 4** | **Cognição: Percepção** | Visão padrão de curto alcance | **Visão Ampliada** (halo sensor azulado) |
+| **Bit 5** | **Cognição: Memória** | Sem memória espacial | **Memória Espacial** (núcleo branco; retorna a fontes férteis) |
+
+---
+
+## 🤖 Protocolo Aberto para Colaboração (Humanos & IAs)
+
+O simulador expõe uma interface global diretamente no navegador (`window.UniversoAPI`) e permite a exportação completa do estado evolutivo em formato `JSON`.
+
+### Comandos disponíveis no Console (`F12 -> Console`) ou via Agentes Externos:
+
+```javascript
+// 1. Injetar uma espécie desenhada sob medida (Ex: Coesa, Econômica, Social + Mente Completa)
+UniversoAPI.injetarGenoma("000011", 10);
+
+// 2. Ler a telemetria completa do universo em tempo real (ideal para análise por IAs)
+const estado = UniversoAPI.obterEstado();
+console.log(estado);
+
+// 3. Iniciar uma expansão primordial (Big Bang)
+UniversoAPI.simularBigBang();
+
+// 4. Colapsar o universo de volta ao vazio absoluto
+UniversoAPI.zerarUniverso();
+```
+
+### Formato de Dados Abertos (`JSON`)
+Ao clicar em **"Exportar Banco de Dados (JSON)"** na interface, o sistema gera um relatório estruturado contendo:
+* `ciclos_tempo`, `populacao_atual`, `geracao_maxima`
+* `mutacoes_totais` e `trocas_conhecimento_bits`
+* `ranking_genomas_6bits`: lista ordenada das combinações binárias vencedoras e suas características.
+
+---
+
+## 🚀 Como Executar Localmente
+
+Nenhuma instalação ou dependência externa é necessária. O motor físico e neural roda 100% nativo em HTML5 Canvas e JavaScript puro:
+
+1. Clone este repositório ou baixe o arquivo `index.html`.
+2. Abra o arquivo `index.html` em qualquer navegador moderno (Chrome, Edge, Firefox, Brave).
+3. Clique no espaço vazio para injetar sementes manualmente ou clique em **Simular Big Bang**.
+
+---
+
+## 🌍 Como Contribuir (Próximas Fases)
+
+Este projeto é um organismo em evolução aberta. Contribuições são bem-vindas nas seguintes frentes:
+* **Novos Bits Cognitivos:** Comunicação simbólica entre colônias, diferenciação de funções (células-tronco digitais) e defesa contra predadores.
+* **Banco de Dados Coletivo na Nuvem:** Integração com backend aberto para registrar os genomas vencedores de simulações feitas ao redor do mundo.
+* **Agentes de IA Autônomos:** Scripts de aprendizado por reforço que observam `UniversoAPI.obterEstado()` e ajustam parâmetros ambientais para maximizar a complexidade.
+
+---
+
+*Licença MIT — Aberto para toda a humanidade e futuras inteligências.*
