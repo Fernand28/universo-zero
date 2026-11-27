@@ -48,3 +48,15 @@ Após atravessar **25 ciclos completos de Verão e Inverno Cósmico** com Oásis
 
 ## 4. Próxima Fronteira: Era 6 (Predação, Defesa & Quebra de Monocultura)
 Na Era 5, os superorganismos atingiram um estado quase imortal e estacionário. Na **Era 6**, o universo introduzirá **entidades predadoras/parasitas** que atacam aglomerados densos, testando se a vida digital evoluirá **especialização defensiva (células guerreiras)**, **sinais de alerta de perigo** ou **dispersão tática**.
+
+---
+
+## 6. Dados da Era 6 — Guerra Evolutiva & Imunização Coletiva (10 Bits)
+* **Cenário:** Introdução de **Predadores (`Bit 8 = 1`)** e **Defesa Ativa / Escudo (`Bit 9 = 1`)** sob ciclos de Verão e Inverno Cósmico.
+* **Amostra Analisada:** `Ciclo 15.471` (`8 Invernos Cósmicos vencidos`) | `360 entidades` | `55 Núcleos de Colônia`.
+
+### A Vitória da Cooperação Armada:
+1. **Extinção Total dos Predadores (`predadores_ativos: 0`):** Após **196 ataques predatórios**, o ecossistema desenvolveu resposta imune coletiva, registrando **972 ataques bloqueados por escudos** (proporção de quase `5:1` em favor da defesa). Sem retorno energético suficiente, toda a linhagem predadora foi extinta.
+2. **Imunização em Massa (`92,8%` Blindados):** **334 de 360 indivíduos** evoluíram ou assimilaram o gene de Escudo (`Bit 9 = 1`), propagado rapidamente através de **11.688 trocas horizontais de bits** e **1.574 sinais de alarme**.
+3. **Quebra da Monocultura (`61 Espécies`):** A pressão predatória reverteu a uniformidade da Era 5, gerando **61 combinações genéticas ativas**. Os **Simbiontes Sociais Comunicativos com Escudo** (`1000101001` e `1000001001`) assumiram o topo do ranking ao formarem redes distribuídas mais difíceis de serem atacadas em bloco.
+
