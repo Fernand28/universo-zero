@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+      <title>Universo Zero // Fase 8 - Multiverso & Semeadura Cósmica</title>
+      <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', monospace; }
+      body { background-color: #020307; color: #e0e6ed; overflow: hidden; display: flex; flex-direction: column; height: 100vh; }
+
+      #era-bar {
+        position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 20;
+        background: rgba(10, 14, 24, 0.92); border: 1px solid #1e293b;
+        padding: 5px 12px; border-radius: 20px; display: flex; gap: 6px; align-items: center;
+        backdrop-filter: blur(6px); font-size: 11px; flex-wrap: wrap; justify-content: center;
+      }
+      .era-label { color: #64748b; font-weight: bold; margin-right: 2px; }
+      .era-link {
+        text-decoration: none; color: #94a3b8; padding: 3px 8px; border-radius: 12px;
+        transition: 0.2s; border: 1px solid transparent;
+      }
+      .era-link:hover { color: #f8fafc; background: #1e293b; }
+      .era-link.active { color: #fbbf24; background: rgba(251, 191, 36, 0.16); border-color: #d97706; font-weight: bold; }
+
+      #hud-left {
+        position: absolute; top: 15px; left: 15px; z-index: 10;
+        background: rgba(10, 14, 24, 0.9); border: 1px solid #1e293b;
+        padding: 14px; border-radius: 8px; width: 325px; backdrop-filter: blur(6px);
+        max-height: calc(100vh - 175px); overflow-y: auto;
+      }
+      #hud-right {
+        position: absolute; top: 15px; right: 15px; z-index: 10;
+        background: rgba(10, 14, 24, 0.9); border: 1px solid #1e293b;
+        padding: 14px; border-radius: 8px; width: 350px; backdrop-filter: blur(6px);
+        max-height: calc(100vh - 30px); overflow-y: auto;
+      }
+
+      h1 { font-size: 15px; color: #fbbf24; margin-bottom: 4px; letter-spacing: 1px; }
+      h2 { font-size: 13px; color: #38bdf8; margin-bottom: 6px; letter-spacing: 0.5px; text-transform: uppercase; }
+      p.sub { font-size: 11px; color: #94a3b8; margin-bottom: 10px; line-height: 1.4; }
+
+      .season-banner {
+        padding: 7px 10px; border-radius: 6px; margin-bottom: 10px; font-size: 12px;
+        font-weight: bold; display: flex; justify-content: space-between; align-items: center;
+        border: 1px solid #1e293b; transition: 0.5s;
+      }
+      .season-summer { background: rgba(16, 185, 129, 0.15); border-color: #059669; color: #34d399; }
+      .season-winter { background: rgba(56, 189, 248, 0.15); border-color: #0284c7; color: #7dd3fc; }
+
+      .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; font-size: 11px; }
+      .stat-box { background: #0d121d; padding: 6px 8px; border-radius: 4px; border: 1px solid #1e293b; }
+      .stat-val { font-size: 14px; font-weight: bold; color: #f8fafc; }
+      .stat-val.amber { color: #fbbf24; }
+      .stat-val.purple { color: #c084fc; }
+      .stat-val.cyan { color: #38bdf8; }
+      .stat-val.emerald { color: #34d399; }
+
+      .controls { display: flex; flex-direction: column; gap: 7px; font-size: 11px; }
+      label { display: flex; justify-content: space-between; color: #cbd5e1; }
+      input[type=range] { width: 100%; accent-color: #fbbf24; cursor: pointer; }
+
+      .api-box { margin-top: 10px; padding-top: 10px; border-top: 1px solid #1e293b; }
+      .api-row { display: flex; gap: 5px; margin-top: 5px; }
+      input[type=text] {
+        flex: 1; background: #090d16; border: 1px solid #334155; color: #fbbf24;
+        padding: 5px 8px; border-radius: 4px; font-size: 11px; letter-spacing: 1.2px; font-weight: bold;
+      }
+
+      .btns { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+      button {
+        flex: 1; padding: 7px 6px; border: none; border-radius: 4px; cursor: pointer;
+        font-size: 11px; font-weight: bold; transition: 0.2s; min-width: 85px;
+      }
+      .btn-primary { background: #0284c7; color: white; }
+      .btn-primary:hover { background: #0369a1; }
+      .btn-seed { background: #d97706; color: white; }
+      .btn-seed:hover { background: #b45309; }
+      .btn-purple { background: #7c3aed; color: white; }
+      .btn-purple:hover { background: #6d28d9; }
+      .btn-danger { background: #475569; color: white; }
+      .btn-danger:hover { background: #334155; }
+      .btn-export { background: #059669; color: white; width: 100%; margin-top: 6px; }
+      .btn-export:hover { background: #047857; }
+
+      #log {
+        position: absolute; bottom: 15px; left: 15px; z-index: 10;
+        background: rgba(10, 14, 24, 0.88); border: 1px solid #1e293b;
+        padding: 10px; border-radius: 6px; width: 325px; height: 135px;
+        overflow-y: auto; font-size: 11px; color: #94a3b8;
+      }
+      .log-entry { margin-bottom: 4px; border-bottom: 1px solid #161e2e; padding-bottom: 2px; }
+      .highlight { color: #34d399; }
+      .winter-log { color: #7dd3fc; }
+      .seed-log { color: #fbbf24; }
+      .ai-log { color: #c084fc; }
+
+      .genome-item {
+        background: #0d121d; border: 1px solid #1e293b; border-radius: 5px;
+        padding: 7px 9px; margin-bottom: 6px; font-size: 11px;
+      }
+      .genome-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
+      .genome-code { font-weight: bold; font-size: 11px; color: #f8fafc; letter-spacing: 0.8px; }
+      .genome-count { background: #1e293b; padding: 2px 6px; border-radius: 10px; font-weight: bold; color: #fbbf24; }
+      .genome-traits { color: #94a3b8; font-size: 10px; margin-bottom: 4px; line-height: 1.3; }
+      .bar-bg { width: 100%; height: 4px; background: #1e293b; border-radius: 2px; overflow: hidden; }
+      .bar-fill { height: 100%; transition: width 0.3s; }
+
+      canvas { display: block; width: 100vw; height: 100vh; cursor: crosshair; }
+      </style>
+      </head>
+      <body>
+
+      <div id="era-bar">
+      <span class="era-label">ERAS:</span>
+      <a href="fase1.html" class="era-link">Era 1</a>
+      <a href="fase2.html" class="era-link">Era 2</a>
+      <a href="fase3.html" class="era-link">Era 3</a>
+      <a href="fase4.html" class="era-link">Era 4</a>
+      <a href="fase5.html" class="era-link">Era 5</a>
+      <a href="fase6.html" class="era-link">Era 6</a>
+      <a href="fase7.html" class="era-link">Era 7</a>
+      <a href="fase8.html" class="era-link active">Era 8: Multiverso</a>
+      <a href="https://github.com" target="_blank" class="era-link" style="color:#fbbf24;">📊 Dados</a>
+      <a href="https://github.com" target="_blank" class="era-link" style="color:#34d399;">🤝 Colaborar</a>
+      </div>
+
+      <div id="hud-left">
+      <h1>UNIVERSO ZERO // FASE 8</h1>
+      <p class="sub">Multiverso & Semeadura Cósmica: Bibliotecas conscientes lançam pacotes binários no vazio para gerar novos universos.</p>
+
+      <div id="season-box" class="season-banner season-summer">
+      <span id="season-name">☀️ VERÃO CÓSMICO</span>
+      <span id="season-timer">0%</span>
+      </div>
+
+      <div class="stats">
+      <div class="stat-box">Tempo (Ciclos)<div class="stat-val" id="stat-time">0</div></div>
+      <div class="stat-box">Sondas Enviadas 🚀<div class="stat-val amber" id="stat-probes">0</div></div>
+      <div class="stat-box">Universo Alfa (Criador)<div class="stat-val cyan" id="stat-pop-a">0</div></div>
+      <div class="stat-box">Universo Beta (Filho)<div class="stat-val purple" id="stat-pop-b">0</div></div>
+      <div class="stat-box">Bibliotecas Alfa<div class="stat-val emerald" id="stat-lib-a">0</div></div>
+      <div class="stat-box">Bibliotecas Beta<div class="stat-val emerald" id="stat-lib-b">0</div></div>
+      </div>
+
+      <div class="controls">
+      <div>
+      <label>Taxa de Mutação: <span id="val-mut">15%</span></label>
+      <input type="range" id="ctrl-mut" min="0" max="50" value="15">
+      </div>
+      <div>
+      <label>Energia dos Oásis: <span id="val-eng">Alta</span></label>
+      <input type="range" id="ctrl-eng" min="1" max="10" value="8">
+      </div>
+      </div>
+
+      <div class="api-box">
+      <label>Injetar Semente no Alfa (12 bits):</label>
+      <div class="api-row">
+      <input type="text" id="input-dna" maxlength="12" value="100011110111" placeholder="Ex: 100011110111">
+      <button class="btn-purple" id="btn-inject-dna" style="flex:0;">Injetar</button>
+      </div>
+      </div>
+
+      <div class="btns">
+      <button class="btn-primary" id="btn-bigbang">Big Bang Alfa</button>
+      <button class="btn-seed" id="btn-force-probe">Lançar Sonda 🚀</button>
+      <button class="btn-danger" id="btn-reset">Zerar</button>
+      <button class="btn-export" id="btn-export">Exportar Multiverso (JSON)</button>
+      </div>
+      </div>
+
+      <div id="hud-right">
+      <h2>Genomas do Multiverso (Alfa + Beta)</h2>
+      <p class="sub">Observe o código da civilização mãe eclodir no vazio Beta.</p>
+      <div id="genome-list">
+      <div style="font-size: 11px; color: #64748b;">Aguardando gênese no Universo Alfa...</div>
+      </div>
+      </div>
+
+      <div id="log">
+      <div class="log-entry">Fase 8 iniciada. Universo Alfa (Esq) e Vazio Beta (Dir) prontos.</div>
+      </div>
+
+      <canvas id="universe"></canvas>
+
+      <script>
+      const canvas = document.getElementById('universe');
+      const ctx = canvas.getContext('2d');
+      let width, height, midX;
+
+      function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        midX = Math.floor(width / 2);
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      // Índices nomeados dos 12 bits
+      const B_POL = 0;   // 0: Coesão | 1: Simbionte
+      const B_MET = 1;   // 0: Econômico | 1: Veloz
+      const B_SOC = 2;   // 0: Social | 1: Solitário
+      const B_AFI = 3;   // 0: Carga 1 | 1: Carga 2
+      const B_PER = 4;   // 1: Percepção
+      const B_MEM = 5;   // 1: Memória
+      const B_SIG = 6;   // 1: Sinalização
+      const B_COL = 7;   // 1: Multicelular
+      const B_PRD = 8;   // 1: Predador
+      const B_SHD = 9;   // 1: Escudo
+      const B_ARQ = 10;  // 1: Arquiteto Cultural
+      const B_CON = 11;  // 1: Consciência Simbólica
+
+      let entities = [];
+      let nutrients = [];
+      let signals = [];
+      let oases = [];
+      let libraries = [];
+      let probes = []; // Sondas de Semeadura Cósmica atravessando entre universos
+      let cycles = 0;
+      let maxGen = 0;
+      let totalMutations = 0;
+      let totalKnowledgeTransfers = 0;
+      let totalProbesLaunched = 0;
+      let betaSeeded = false;
+      let wintersSurvived = 0;
+      const MAX_POP_PER_UNIVERSE = 210;
+      const MAX_LIBS_PER_UNIVERSE = 7;
+      const YEAR_LENGTH = 1800;
+      const SUMMER_LENGTH = 1100;
+      let isWinter = false;
+      const ctrlMut = document.getElementById('ctrl-mut');
+      const ctrlEng = document.getElementById('ctrl-eng');
+      ctrlMut.oninput = () => document.getElementById('val-mut').innerText = ctrlMut.value + '%';
+      ctrlEng.oninput = () => {
+        const v = ctrlEng.value;
+        document.getElementById('val-eng').innerText = v < 4 ? 'Baixa' : v < 8 ? 'Média' : 'Alta';
+      };
+      function generateOases() {
+        oases = [];
+        // Oásis no Universo Alfa (Esquerda)
+        for (let i = 0; i < 2; i++) {
+          oases.push({
+            universe: 'A',
+            x: 120 + Math.random() * Math.max(100, midX - 240),
+            y: 140 + Math.random() * Math.max(100, height - 280),
+            radius: 105
+          });
+      }
+      // Oásis no Universo Beta (Direita - só ativam energia após primeira semeadura)
+      for (let i = 0; i < 2; i++) {
+        oases.push({
+          universe: 'B',
+          x: midX + 120 + Math.random() * Math.max(100, midX - 240),
+          y: 140 + Math.random() * Math.max(100, height - 280),
+          radius: 105
+        });
+      }
+      }
+      generateOases();
+      function addLog(msg, type = 'normal') {
+        const log = document.getElementById('log');
+        const div = document.createElement('div');
+        div.className = 'log-entry' + (type === 'highlight' ? ' highlight' : type === 'winter' ? ' winter-log' : type === 'seed' ? ' seed-log' : type === 'ai' ? ' ai-log' : '');
+        div.innerText = '[Ciclo ' + cycles + '] ' + msg;
+        log.prepend(div);
+        if (log.children.length > 28) log.lastChild.remove();
+      }
+      function describeDNA(dna) {
+        const t1 = dna.at(B_POL) === 0 ? 'Coesão' : 'Simbionte';
+        const t2 = dna.at(B_MET) === 0 ? 'Econômico' : 'Veloz';
+        const t3 = dna.at(B_SOC) === 0 ? 'Social' : 'Solitário';
+        const extras = [];
+        if (dna.at(B_PER) === 1) extras.push('👁️Percepção');
+        if (dna.at(B_MEM) === 1) extras.push('🧠Memória');
+        if (dna.at(B_SIG) === 1) extras.push('📡Sinal');
+        if (dna.at(B_COL) === 1) extras.push('🧬Colônia');
+        if (dna.at(B_SHD) === 1) extras.push('🛡️Escudo');
+        if (dna.at(B_ARQ) === 1) extras.push('🏛️Arquiteto');
+        if (dna.at(B_CON) === 1) extras.push('✨Consciência');
+        return `${t1} • ${t2} • ${t3}${extras.length ? ` | ${extras.join(' ')}` : ''}`;
+      }
+      function getColorFromDNA(dna) {
+        if (dna.at(B_CON) === 1) return '#c084fc';
+        if (dna.at(B_POL) === 0) {
+          return dna.at(B_AFI) === 0 ? '#38bdf8' : '#818cf8';
+        } else {
+        return dna.at(B_AFI) === 0 ? '#fbbf24' : '#f472b6';
+      }
+      }
+      class Entity {
+        constructor(x, y, universe = 'A', dna = null, gen = 1) {
+          this.x = x;
+          this.y = y;
+          this.universe = universe; // 'A' = Alfa (Esquerda) | 'B' = Beta (Direita)
+          this.vx = (Math.random() - 0.5) * 2;
+          this.vy = (Math.random() - 0.5) * 2;
+          this.gen = gen;
+          if (gen > maxGen) maxGen = gen;
+          this.dna = dna || [
+          Math.round(Math.random()),
+          Math.round(Math.random()),
+          Math.round(Math.random()),
+          Math.round(Math.random()),
+          Math.random() < 0.28 ? 1 : 0,
+          Math.random() < 0.25 ? 1 : 0,
+          Math.random() < 0.25 ? 1 : 0,
+          Math.random() < 0.25 ? 1 : 0,
+          0,
+          Math.random() < 0.20 ? 1 : 0,
+          Math.random() < 0.18 ? 1 : 0,
+          Math.random() < 0.15 ? 1 : 0
+          ];
+          this.energy = 85;
+          this.memorySpot = null;
+          this.signalCooldown = 0;
+          this.buildCooldown = 0;
+          this.bondCycles = 0;
+          this.isColonyCore = false;
+          this.updatePhenotype();
+        }
+      updatePhenotype() {
+        this.hasShield = this.dna.at(B_SHD) === 1;
+        this.isArchitect = this.dna.at(B_ARQ) === 1;
+        this.hasConsciousness = this.dna.at(B_CON) === 1;
+        this.baseRadius = this.dna.at(B_POL) === 0 ? 4.4 : 3.6;
+        this.radius = this.isColonyCore ? this.baseRadius + 2.0 : this.baseRadius;
+        this.speed = this.dna.at(B_MET) === 0 ? 1.25 : 2.3;
+        this.color = getColorFromDNA(this.dna);
+        this.visionRange = this.dna.at(B_PER) === 1 ? 160 : 75;
+        this.hasMemory = this.dna.at(B_MEM) === 1;
+        this.canSignal = this.dna.at(B_SIG) === 1;
+        this.isMulticellular = this.dna.at(B_COL) === 1;
+      }
+      mutateDNA() {
+        const rate = parseInt(ctrlMut.value) / 100;
+        let mutated = false;
+        const newDna = this.dna.map((bit, idx) => {
+          if (idx === B_PRD) return 0;
+          if (Math.random() < rate) {
+            mutated = true;
+            return bit === 0 ? 1 : 0;
+          }
+        return bit;
+      });
+      if (mutated) totalMutations++;
+      return newDna;
+      }
+      emitSignal() {
+        if (!this.canSignal || this.signalCooldown > 0) return;
+        signals.push({
+          universe: this.universe,
+          x: this.x,
+          y: this.y,
+          radius: 5,
+          maxRadius: 200,
+          alpha: 0.75
+        });
+      this.signalCooldown = 120;
+      this.energy -= 2;
+      }
+      buildCulturalLibrary() {
+        if (!this.isArchitect || this.buildCooldown > 0) return;
+        const uLibs = libraries.filter(l => l.universe === this.universe);
+        if (uLibs.length >= MAX_LIBS_PER_UNIVERSE) return;
+        for (let lib of uLibs) {
+          if (Math.hypot(lib.x - this.x, lib.y - this.y) < 145) return;
+        }
+      this.energy -= 60;
+      this.buildCooldown = 550;
+      libraries.push({
+        universe: this.universe,
+        x: this.x,
+        y: this.y,
+        storedDna: [...this.dna],
+        seedEnergy: 0,
+        radius: 115,
+        creatorGen: this.gen
+      });
+      addLog(`🏛️ Biblioteca erguida no Universo ${this.universe === 'A' ? 'Alfa' : 'Beta'}!`, 'highlight');
+      }
+      update() {
+        if (this.signalCooldown > 0) this.signalCooldown--;
+        if (this.buildCooldown > 0) this.buildCooldown--;
+        let nearLibrary = null;
+        for (let lib of libraries) {
+          if (lib.universe === this.universe && Math.hypot(lib.x - this.x, lib.y - this.y) < lib.radius) {
+            nearLibrary = lib;
+            break;
+          }
+      }
+      const libDiscount = nearLibrary ? 0.65 : 1.0;
+      const winterMultiplier = isWinter ? (this.isColonyCore ? 1.1 : 1.35) : 1.0;
+      let cost = (this.dna.at(B_MET) === 0 ? 0.08 : 0.16) * winterMultiplier * libDiscount;
+      if (this.hasShield) cost += 0.015;
+      if (this.isArchitect) cost += 0.01;
+      if (this.hasConsciousness) cost += 0.012;
+      this.energy -= cost;
+      const learnProb = 0.007;
+      let activeNeighbors = 0;
+      for (let other of entities) {
+        if (other === this || other.universe !== this.universe) continue;
+        const dx = other.x - this.x;
+        const dy = other.y - this.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist > 0 && dist < 85) {
+          const sameType = this.dna.at(B_AFI) === other.dna.at(B_AFI);
+          let force = 0;
+          if (this.dna.at(B_POL) === 0) {
+            force = sameType ? 0.032 : -0.02;
+          } else {
+          force = sameType ? -0.03 : 0.04;
+        }
+      if (dist < 12) force = -0.15;
+      this.vx += (dx / dist) * force;
+      this.vy += (dy / dist) * force;
+      if (this.dna.at(B_SOC) === 0 && other.dna.at(B_SOC) === 0 && dist < 48) {
+        activeNeighbors++;
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y);
+        ctx.lineTo(other.x, other.y);
+        ctx.strokeStyle = this.hasConsciousness
+        ? 'rgba(192, 132, 252, 0.35)'
+        : 'rgba(148, 163, 184, 0.20)';
+        ctx.lineWidth = this.isColonyCore ? 1.5 : 1;
+        ctx.stroke();
+        this.energy += isWinter ? 0.045 : 0.025;
+        if (this.isMulticellular && this.energy > other.energy + 20 && other.energy < 65) {
+          const transfer = isWinter ? 0.65 : 0.4;
+          this.energy -= transfer;
+          other.energy += transfer;
+        }
+      if (this.hasMemory && other.hasMemory && other.memorySpot && !this.memorySpot) {
+        this.memorySpot = { ...other.memorySpot };
+      }
+      if (Math.random() < learnProb) {
+        const bitIndex = Math.floor(Math.random() * 12);
+        if (bitIndex !== B_PRD && this.dna.at(bitIndex) !== other.dna.at(bitIndex)) {
+          other.dna[bitIndex] = this.dna.at(bitIndex);
+          other.updatePhenotype();
+          totalKnowledgeTransfers++;
+        }
+      }
+      }
+      }
+      }
+      if (this.isMulticellular && activeNeighbors >= 3) {
+        this.bondCycles++;
+        if (this.bondCycles > 140 && !this.isColonyCore) {
+          this.isColonyCore = true;
+          this.updatePhenotype();
+        }
+      } else {
+      this.bondCycles = Math.max(0, this.bondCycles - 2);
+      if (this.bondCycles === 0 && this.isColonyCore) {
+        this.isColonyCore = false;
+        this.updatePhenotype();
+      }
+      }
+      if (this.isArchitect && activeNeighbors >= 2 && this.energy > 135) {
+        this.buildCulturalLibrary();
+      }
+      // Contribuição de dados conscientes para a Biblioteca (carrega a Sonda de Semeadura!)
+      if (nearLibrary) {
+        if (this.hasConsciousness) {
+          nearLibrary.seedEnergy += 0.18;
+          if (Math.random() < 0.07) {
+            ctx.beginPath();
+            ctx.moveTo(this.x, this.y);
+            ctx.lineTo(nearLibrary.x, nearLibrary.y);
+            ctx.strokeStyle = 'rgba(251, 191, 36, 0.35)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+      }
+      // Baixa genes avançados da Biblioteca
+      if (Math.random() < 0.05) {
+        const bitIdx = 4 + Math.floor(Math.random() * 8);
+        if (bitIdx !== B_PRD && nearLibrary.storedDna.at(bitIdx) === 1 && this.dna.at(bitIdx) === 0) {
+          this.dna[bitIdx] = 1;
+          this.updatePhenotype();
+          totalKnowledgeTransfers++;
+        }
+      }
+      }
+      // Consciência migra para Bibliotecas antes/durante o Inverno
+      if (this.hasConsciousness && (isWinter || (cycles % YEAR_LENGTH) > SUMMER_LENGTH - 180)) {
+        let closestLib = null;
+        let minDist = Infinity;
+        for (let lib of libraries) {
+          if (lib.universe !== this.universe) continue;
+          const d = Math.hypot(lib.x - this.x, lib.y - this.y);
+          if (d < minDist) { minDist = d; closestLib = lib; }
+        }
+      if (closestLib && minDist > 35) {
+        this.vx += ((closestLib.x - this.x) / minDist) * 0.07;
+        this.vy += ((closestLib.y - this.y) / minDist) * 0.07;
+      }
+      }
+      if (this.canSignal && this.energy < 110) {
+        for (let sig of signals) {
+          if (sig.universe !== this.universe) continue;
+          const dx = sig.x - this.x;
+          const dy = sig.y - this.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist > 15 && dist < sig.maxRadius) {
+            this.vx += (dx / dist) * 0.08;
+            this.vy += (dy / dist) * 0.08;
+          }
+      }
+      }
+      let foundFoodNearby = false;
+      let localFoodCount = 0;
+      for (let i = nutrients.length - 1; i >= 0; i--) {
+        const n = nutrients[i];
+        if (n.universe !== this.universe) continue;
+        const dx = n.x - this.x;
+        const dy = n.y - this.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < this.visionRange) {
+          foundFoodNearby = true;
+          localFoodCount++;
+          const pull = this.dna.at(B_PER) === 1 ? 0.12 : 0.08;
+          this.vx += (dx / dist) * pull;
+          this.vy += (dy / dist) * pull;
+        }
+      if (dist < this.radius + 4) {
+        const gain = this.isColonyCore ? 45 : 35;
+        this.energy = Math.min(this.isColonyCore ? 260 : 160, this.energy + gain);
+        if (this.hasMemory) this.memorySpot = { x: n.x, y: n.y };
+        if (this.canSignal && localFoodCount >= 2) this.emitSignal();
+        nutrients.splice(i, 1);
+      }
+      }
+      if (!foundFoodNearby && this.hasMemory && this.memorySpot && this.energy < 100) {
+        const dx = this.memorySpot.x - this.x;
+        const dy = this.memorySpot.y - this.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist > 18) {
+          this.vx += (dx / dist) * 0.065;
+          this.vy += (dy / dist) * 0.065;
+        } else if (isWinter) {
+        this.memorySpot = null;
+      }
+      }
+      const effectiveSpeed = this.isColonyCore ? this.speed * 0.45 : this.speed;
+      const vel = Math.hypot(this.vx, this.vy);
+      if (vel > effectiveSpeed) {
+        this.vx = (this.vx / vel) * effectiveSpeed;
+        this.vy = (this.vy / vel) * effectiveSpeed;
+      }
+      this.x += this.vx;
+      this.y += this.vy;
+      // Fronteiras de cada Universo (Alfa: 0 -> midX-8 | Beta: midX+8 -> width)
+      const minX = this.universe === 'A' ? 6 : midX + 8;
+      const maxX = this.universe === 'A' ? midX - 8 : width - 6;
+      if (this.x < minX) { this.x = minX; this.vx *= -0.8; }
+      if (this.x > maxX) { this.x = maxX; this.vx *= -0.8; }
+      if (this.y < 6) { this.y = 6; this.vy *= -0.8; }
+      if (this.y > height - 6) { this.y = height - 6; this.vy *= -0.8; }
+      const uPop = entities.filter(e => e.universe === this.universe).length;
+      const reproThreshold = this.isColonyCore ? 170 : 125;
+      if (this.energy >= reproThreshold && uPop < MAX_POP_PER_UNIVERSE) {
+        this.energy -= 60;
+        const childDna = this.mutateDNA();
+        const child = new Entity(this.x + 5, this.y + 5, this.universe, childDna, this.gen + 1);
+        if (child.hasMemory && this.memorySpot) {
+          child.memorySpot = { ...this.memorySpot };
+        }
+      entities.push(child);
+      }
+      }
+      draw() {
+        if (this.hasShield) {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius + 3.5, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(34, 211, 238, 0.65)';
+          ctx.lineWidth = 1.3;
+          ctx.stroke();
+        }
+      if (this.isColonyCore) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius + 2, 0, Math.PI * 2);
+        ctx.strokeStyle = '#34d399';
+        ctx.lineWidth = 1.3;
+        ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.fill();
+      if (this.hasMemory || this.hasConsciousness) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 1.6, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+      }
+      }
+      }
+      function launchSeedingProbe(originLib = null) {
+        const startX = originLib ? originLib.x : midX * 0.6;
+        const startY = originLib ? originLib.y : height / 2;
+        const targetX = midX + 100 + Math.random() * Math.max(100, midX - 200);
+        const targetY = 150 + Math.random() * Math.max(100, height - 300);
+        // Pega o melhor genoma disponível no Universo Alfa ou da Biblioteca
+        let seedDna = originLib
+        ? [...originLib.storedDna]
+        : Array.from({ length: 12 }, () => Math.round(Math.random()));
+        const consciousAlpha = entities.filter(e => e.universe === 'A' && e.hasConsciousness);
+        if (consciousAlpha.length > 0) {
+          const chosen = consciousAlpha[Math.floor(Math.random() * consciousAlpha.length)];
+          seedDna = [...chosen.dna];
+        }
+      probes.push({
+        x: startX,
+        y: startY,
+        tx: targetX,
+        ty: targetY,
+        dna: seedDna,
+        trail: []
+      });
+      totalProbesLaunched++;
+      addLog(`🚀 Sonda de Semeadura lançada do Alfa rumo ao Vazio Beta! Código [${seedDna.join('')}]`, 'seed');
+      }
+      function updateGenomeDatabase() {
+        const popA = entities.filter(e => e.universe === 'A').length;
+        const popB = entities.filter(e => e.universe === 'B').length;
+        const libA = libraries.filter(l => l.universe === 'A').length;
+        const libB = libraries.filter(l => l.universe === 'B').length;
+        document.getElementById('stat-pop-a').innerText = popA;
+        document.getElementById('stat-pop-b').innerText = popB;
+        document.getElementById('stat-lib-a').innerText = libA;
+        document.getElementById('stat-lib-b').innerText = libB;
+        document.getElementById('stat-probes').innerText = totalProbesLaunched;
+        const counts = {};
+        for (let ent of entities) {
+          const code = ent.dna.join('');
+          counts[code] = (counts[code] || 0) + 1;
+        }
+      const sorted = Object.entries(counts).sort((a, b) => b.at(1) - a.at(1));
+      const listEl = document.getElementById('genome-list');
+      if (sorted.length === 0) {
+        listEl.innerHTML = 'Aguardando gênese no Universo Alfa...';
+        return;
+      }
+      const total = entities.length;
+      let html = '';
+      for (let entry of sorted.slice(0, 14)) {
+        const code = entry.at(0);
+        const count = entry.at(1);
+        const dnaArr = code.split('').map(Number);
+        const pct = Math.round((count / total) * 100);
+        const color = getColorFromDNA(dnaArr);
+        const traits = describeDNA(dnaArr);
+        html += `<div class="genome-item"> <div class="genome-header"> <span class="genome-code">[${code}]</span> <span class="genome-count">${count} (${pct}%)</span> </div> <div class="genome-traits">${traits}</div> <div class="bar-bg"> <div class="bar-fill" style="width: ${pct}%; background: ${color};"></div> </div> </div>`;
+      }
+      listEl.innerHTML = html;
+      }
+      function injectCustomDNA(codeStr, universe = 'A', x = midX / 2, y = height / 2, qty = 8) {
+        const clean = codeStr.replace(/[^01]/g, '').padEnd(12, '0').slice(0, 12);
+        const dnaArr = clean.split('').map(Number);
+        for (let i = 0; i < qty; i++) {
+          entities.push(new Entity(x + (Math.random() - 0.5) * 40, y + (Math.random() - 0.5) * 40, universe, [...dnaArr], 1));
+        }
+      addLog(`Injetadas ${qty} sementes [${clean}] no Universo ${universe === 'A' ? 'Alfa' : 'Beta'}.`, 'highlight');
+      }
+      function exportDatabase() {
+        const counts = {};
+        for (let ent of entities) {
+          const code = ent.dna.join('');
+          counts[code] = (counts[code] || 0) + 1;
+        }
+      const payload = {
+        projeto: "Universo Zero - Fase 8 (Multiverso & Semeadura Cósmica)",
+        timestamp: new Date().toISOString(),
+        estacao_atual: isWinter ? "Inverno Cósmico" : "Verão Cósmico",
+        metricas_multiverso: {
+          ciclos_tempo: cycles,
+          invernos_vencidos: wintersSurvived,
+          sondas_semeadura_lancadas: totalProbesLaunched,
+          universo_beta_semeado: betaSeeded,
+          populacao_alfa: entities.filter(e => e.universe === 'A').length,
+          populacao_beta: entities.filter(e => e.universe === 'B').length,
+          bibliotecas_alfa: libraries.filter(l => l.universe === 'A').length,
+          bibliotecas_beta: libraries.filter(l => l.universe === 'B').length,
+          trocas_conhecimento_bits: totalKnowledgeTransfers
+        },
+      ranking_genomas_multiverso: Object.entries(counts)
+      .sort((a, b) => b.at(1) - a.at(1))
+      .map(entry => ({
+        codigo_binario: entry.at(0),
+        caracteristicas: describeDNA(entry.at(0).split('').map(Number)),
+        individuos: entry.at(1)
+      }))
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `universo_fase8_multiverso_ciclo_${cycles}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      addLog('Relatório do Multiverso (Era 8) exportado em JSON!', 'highlight');
+      }
+      function bigBangAlfa() {
+        generateOases();
+        const cx = midX / 2;
+        const cy = height / 2;
+        for (let i = 0; i < 50; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const dist = Math.random() * 60;
+          const ent = new Entity(cx + Math.cos(angle) * dist, cy + Math.sin(angle) * dist, 'A');
+          ent.vx = Math.cos(angle) * 3;
+          ent.vy = Math.sin(angle) * 3;
+          entities.push(ent);
+        }
+      addLog('BIG BANG ALFA! 50 sementes primordiais liberadas. Vazio Beta aguarda semeadura.', 'highlight');
+      }
+      function resetUniverse() {
+        entities = [];
+        nutrients = [];
+        signals = [];
+        libraries = [];
+        probes = [];
+        cycles = 0;
+        maxGen = 0;
+        totalMutations = 0;
+        totalKnowledgeTransfers = 0;
+        totalProbesLaunched = 0;
+        betaSeeded = false;
+        wintersSurvived = 0;
+        isWinter = false;
+        generateOases();
+        updateGenomeDatabase();
+        addLog('Multiverso colapsado de volta ao vazio absoluto.');
+      }
+      window.UniversoAPI = {
+        versao: "8.0-multiverso-semeadura",
+        injetarGenoma: (codigo12Bits, universo = 'A', quantidade = 8) => {
+          const x = universo === 'B' ? midX * 1.5 : midX * 0.5;
+          injectCustomDNA(String(codigo12Bits), universo, x, height / 2, quantidade);
+          return `Genoma ${codigo12Bits} injetado no Universo ${universo}.`;
+        },
+      lancarSonda: () => {
+        launchSeedingProbe();
+        return 'Sonda de semeadura lançada para o Universo Beta.';
+      },
+      obterEstado: () => ({
+        versao: "8.0-multiverso-semeadura",
+        ciclos: cycles,
+        sondasLancadas: totalProbesLaunched,
+        betaSemeado: betaSeeded,
+        populacaoAlfa: entities.filter(e => e.universe === 'A').length,
+        populacaoBeta: entities.filter(e => e.universe === 'B').length
+      }),
+      simularBigBang: bigBangAlfa,
+      zerarUniverso: resetUniverse
+      };
+      canvas.addEventListener('mousedown', (e) => {
+        const targetU = e.clientX < midX ? 'A' : 'B';
+        if (targetU === 'B') betaSeeded = true;
+        for (let i = 0; i < 6; i++) {
+          entities.push(new Entity(e.clientX + (Math.random() - 0.5) * 30, e.clientY + (Math.random() - 0.5) * 30, targetU));
+        }
+      addLog(`Pulso de 6 sementes injetado no Universo ${targetU === 'A' ? 'Alfa' : 'Beta'}.`);
+      });
+      document.getElementById('btn-inject-dna').addEventListener('click', () => {
+        injectCustomDNA(document.getElementById('input-dna').value, 'A');
+      });
+      document.getElementById('btn-bigbang').addEventListener('click', bigBangAlfa);
+      document.getElementById('btn-force-probe').addEventListener('click', () => launchSeedingProbe());
+      document.getElementById('btn-reset').addEventListener('click', resetUniverse);
+      document.getElementById('btn-export').addEventListener('click', exportDatabase);
+      function loop() {
+        ctx.fillStyle = isWinter ? 'rgba(4, 10, 22, 0.38)' : 'rgba(2, 3, 7, 0.35)';
+        ctx.fillRect(0, 0, width, height);
+        // Desenha a Membrana Dimensional central separando Alfa e Beta
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(midX, 0);
+        ctx.lineTo(midX, height);
+        ctx.strokeStyle = 'rgba(251, 191, 36, 0.25)';
+        ctx.setLineDash([6, 6]);
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.restore();
+        // Rótulos sutis dos Universos no fundo
+        ctx.font = 'bold 12px monospace';
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.25)';
+        ctx.fillText('UNIVERSO ALFA (PRIMORDIAL)', midX - 220, height - 20);
+        ctx.fillStyle = 'rgba(192, 132, 252, 0.25)';
+        ctx.fillText(betaSeeded ? 'UNIVERSO BETA (CIVILIZAÇÃO FILHA)' : 'UNIVERSO BETA (VAZIO ABSOLUTO)', midX + 20, height - 20);
+        if (entities.length > 0) {
+          cycles++;
+          const yearPos = cycles % YEAR_LENGTH;
+          const nowWinter = yearPos >= SUMMER_LENGTH;
+          if (nowWinter && !isWinter) {
+            isWinter = true;
+            addLog('❄️ INVERNO CÓSMICO no Multiverso.', 'winter');
+          } else if (!nowWinter && isWinter) {
+          isWinter = false;
+          wintersSurvived++;
+          generateOases();
+          addLog('☀️ VERÃO CÓSMICO! Novos Oásis surgiram.', 'highlight');
+        }
+      const seasonBox = document.getElementById('season-box');
+      const seasonName = document.getElementById('season-name');
+      const seasonTimer = document.getElementById('season-timer');
+      if (isWinter) {
+        seasonBox.className = 'season-banner season-winter';
+        seasonName.innerText = '❄️ INVERNO CÓSMICO';
+        const pct = Math.round(((yearPos - SUMMER_LENGTH) / (YEAR_LENGTH - SUMMER_LENGTH)) * 100);
+        seasonTimer.innerText = pct + '%';
+      } else {
+      seasonBox.className = 'season-banner season-summer';
+      seasonName.innerText = '☀️ VERÃO CÓSMICO';
+      const pct = Math.round((yearPos / SUMMER_LENGTH) * 100);
+      seasonTimer.innerText = pct + '%';
+      }
+      }
+      // Desenha Oásis ativos
+      if (!isWinter) {
+        for (let o of oases) {
+          if (o.universe === 'B' && !betaSeeded) continue;
+          ctx.beginPath();
+          ctx.arc(o.x, o.y, o.radius, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(16, 185, 129, 0.035)';
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(16, 185, 129, 0.12)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+      // Atualiza e desenha Bibliotecas Culturais (e dispara Sondas quando carregadas!)
+      for (let lib of libraries) {
+        if (lib.universe === 'A' && lib.seedEnergy >= 100) {
+          lib.seedEnergy = 0;
+          launchSeedingProbe(lib);
+        }
+      ctx.beginPath();
+      ctx.arc(lib.x, lib.y, lib.radius, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(192, 132, 252, 0.03)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.18)';
+      ctx.setLineDash([4, 4]);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.save();
+      ctx.translate(lib.x, lib.y);
+      ctx.rotate(cycles * 0.01);
+      ctx.beginPath();
+      ctx.moveTo(0, -9);
+      ctx.lineTo(9, 0);
+      ctx.lineTo(0, 9);
+      ctx.lineTo(-9, 0);
+      ctx.closePath();
+      ctx.fillStyle = '#fbbf24';
+      ctx.fill();
+      ctx.strokeStyle = '#c084fc';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.restore();
+      }
+      // Atualiza e desenha Sondas de Semeadura atravessando a membrana dimensional
+      for (let i = probes.length - 1; i >= 0; i--) {
+        const p = probes[i];
+        p.trail.push({ x: p.x, y: p.y });
+        if (p.trail.length > 22) p.trail.shift();
+        const dx = p.tx - p.x;
+        const dy = p.ty - p.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < 10) {
+          // Eclosão no Universo Beta! O "nada" recebe a semente da existência!
+          betaSeeded = true;
+          for (let k = 0; k < 8; k++) {
+            const ox = (Math.random() - 0.5) * 35;
+            const oy = (Math.random() - 0.5) * 35;
+            entities.push(new Entity(p.tx + ox, p.ty + oy, 'B', [...p.dna], 1));
+          }
+        // Libera pulso inicial de energia no ponto de eclosão
+        for (let k = 0; k < 18; k++) {
+          nutrients.push({
+            universe: 'B',
+            x: p.tx + (Math.random() - 0.5) * 90,
+            y: p.ty + (Math.random() - 0.5) * 90
+          });
+      }
+      addLog('✨ GÊNESE NO BETA! A sonda eclodiu no vazio e iniciou uma nova civilização!', 'ai');
+      probes.splice(i, 1);
+      continue;
+      }
+      p.x += (dx / dist) * 4.2;
+      p.y += (dy / dist) * 4.2;
+      // Desenha rastro estelar da sonda
+      ctx.beginPath();
+      for (let t = 0; t < p.trail.length; t++) {
+        const pt = p.trail[t];
+        if (t === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      }
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.75)';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+      }
+      // Ondas de comunicação
+      for (let i = signals.length - 1; i >= 0; i--) {
+        const s = signals[i];
+        s.radius += 2.2;
+        s.alpha -= 0.008;
+        if (s.alpha <= 0 || s.radius >= s.maxRadius) {
+          signals.splice(i, 1);
+          continue;
+        }
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(251, 191, 36, ${s.alpha})`;
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+      }
+      // Geração de energia nos Oásis
+      const energyRate = parseInt(ctrlEng.value);
+      const spawnProb = isWinter ? energyRate * 0.005 : energyRate * 0.065;
+      if (Math.random() < spawnProb && nutrients.length < 180) {
+        const activeOases = oases.filter(o => o.universe === 'A' || betaSeeded);
+        if (!isWinter && activeOases.length > 0 && Math.random() < 0.85) {
+          const o = activeOases[Math.floor(Math.random() * activeOases.length)];
+          const angle = Math.random() * Math.PI * 2;
+          const r = Math.random() * o.radius;
+          nutrients.push({ universe: o.universe, x: o.x + Math.cos(angle) * r, y: o.y + Math.sin(angle) * r });
+        } else {
+        const u = (betaSeeded && Math.random() < 0.5) ? 'B' : 'A';
+        const nx = u === 'A' ? Math.random() * (midX - 10) : midX + 10 + Math.random() * (midX - 10);
+        nutrients.push({ universe: u, x: nx, y: Math.random() * height });
+      }
+      }
+      ctx.fillStyle = '#10b981';
+      for (let n of nutrients) {
+        ctx.fillRect(n.x, n.y, 2.2, 2.2);
+      }
+      for (let i = entities.length - 1; i >= 0; i--) {
+        const ent = entities[i];
+        ent.update();
+        ent.draw();
+        if (ent.energy <= 0) {
+          if (Math.random() < 0.5) nutrients.push({ universe: ent.universe, x: ent.x, y: ent.y });
+          entities.splice(i, 1);
+        }
+      }
+      document.getElementById('stat-time').innerText = cycles;
+      if (cycles % 20 === 0) {
+        updateGenomeDatabase();
+      }
+      requestAnimationFrame(loop);
+      }
+      loop();
+      </script>
+      <!-- Integração Firebase Firestore - Universo Zero v2.0 -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+  // 1. COLE SUAS CHAVES DO FIREBASE AQUI:
+  const firebaseConfig = {
+    apiKey: "AIzaSyDWksdHygRbBNn---JMFSEB1GTmQJFEGTc",
+  authDomain: "codigosuniverso-6cab3.firebaseapp.com",
+  projectId: "codigosuniverso-6cab3",
+  storageBucket: "codigosuniverso-6cab3.firebasestorage.app",
+  messagingSenderId: "944884695734",
+  appId: "1:944884695734:web:b125789cd27b3caf031c17",
+  measurementId: "G-WM2RT7L9VZ"
+  };
+
+  // Inicializa o Firebase e o Firestore
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  let ultimoCicloAutoSave = 0;
+
+  function capturarEstadoAtual() {
+    const metricas = {};
+    document.querySelectorAll('[id^="stat-"]').forEach(el => {
+      metricas[el.id] = el.textContent.trim();
+    });
+    return {
+      projeto: "Universo Zero",
+      fase: location.pathname.split('/').pop(),
+      timestamp: new Date().toISOString(),
+      metricas
+    };
+  }
+
+  window.gerarDadosExportacao = capturarEstadoAtual;
+
+  setInterval(async () => {
+    const ciclos = Number(document.getElementById("stat-time")?.textContent || 0);
+    if (ciclos >= 50000 && ciclos - ultimoCicloAutoSave >= 50000) {
+      ultimoCicloAutoSave = ciclos;
+      try {
+        await addDoc(collection(db, "experimentos_multiverso"), {
+          pesquisador: sessionStorage.getItem("pesquisador") || "AutoSave",
+          tipo: "autosave",
+          ciclo_limite: Math.floor(ciclos / 50000) * 50000,
+          data_envio_servidor: serverTimestamp(),
+          dados_experimento: capturarEstadoAtual()
+        });
+        console.log("Auto-save Firebase enviado no ciclo", ciclos);
+      } catch (erro) {
+        console.error("Falha no auto-save Firebase:", erro);
+      }
+    }
+  }, 5000);
+
+  // Função para capturar os dados atuais e enviar ao banco
+  window.enviarSimulacaoFirebase = async function(dadosSimulacao, nomePesquisador = "Anonimo") {
+    try {
+      const payload = {
+        pesquisador: nomePesquisador,
+        data_envio_servidor: serverTimestamp(),
+        dados_experimento: dadosSimulacao
+      };
+
+      const docRef = await addDoc(collection(db, "experimentos_multiverso"), payload);
+      console.log("Experimento salvo com ID:", docRef.id);
+      alert(`✅ Dados enviados com sucesso para o banco global!\nID do Registro: ${docRef.id}`);
+    } catch (erro) {
+      console.error("Erro ao enviar para o Firebase:", erro);
+      alert("❌ Erro ao enviar dados. Verifique o console (F12) e suas chaves do Firebase.");
+    }
+  };
+
+  // Cria o botão visual automaticamente na barra lateral (abaixo do botão de Exportar JSON)
+  const criarBotaoNuvem = () => {
+    const btnExportar = document.querySelector("button[id*='export'], button[onclick*='export'], .btn-export") 
+      || Array.from(document.querySelectorAll("button")).find(b => b.textContent.includes("Exportar"));
+
+    {
+      const btnNuvem = document.createElement("button");
+      btnNuvem.innerText = "☁️ Salvar na Nuvem (Firebase)";
+      btnNuvem.style.cssText = "width: 100%; margin-top: 8px; padding: 8px; background: #0284c7; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;";
+      
+      btnNuvem.onclick = async () => {
+        const apelido = prompt("Digite seu nome ou apelido de pesquisador (para o ranking):", "Explorador_01");
+        if (!apelido) return;
+
+        // Dispara o mesmo objeto que você usa para gerar o JSON
+        // Se a sua função de exportação tiver outro nome, basta chamar ela aqui:
+        if (typeof gerarDadosExportacao === "function") {
+          await window.enviarSimulacaoFirebase(gerarDadosExportacao(), apelido);
+        } else {
+          alert("⚠️ Conecte a variável de estado do seu JSON na função 'gerarDadosExportacao' dentro do script.");
+        }
+      };
+
+      const container = btnExportar?.parentElement || document.querySelector(".btns") || document.querySelector("#hud") || document.body;
+      container.appendChild(btnNuvem);
+    }
+  };
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", criarBotaoNuvem, { once: true });
+  } else {
+    criarBotaoNuvem();
+  }
+</script>
+
+  </body>
+</html>
